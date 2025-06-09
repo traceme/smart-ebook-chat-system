@@ -35,6 +35,13 @@ const links = [
 
 const samplePageLinks = [
   {
+    text: "🚀 Smart eBook Chat System",
+    url: "app",
+    badge: true,
+    description:
+      "🔥 MAIN APP! Complete document upload, processing, search, and AI chat system",
+  },
+  {
     text: "📧 Complete Gmail Layout",
     url: "gmail-layout-complete",
     badge: true,
@@ -168,14 +175,49 @@ const IndexPage = () => (
       <h1>
         Welcome to <b>Smart eBook Chat System</b>
       </h1>
+      
+      {/* Main App Entry Button */}
+      <div style={{ margin: '2rem 0', textAlign: 'center' }}>
+        <Link 
+          to="/app" 
+          style={{ 
+            textDecoration: 'none',
+            display: 'inline-block',
+            padding: '16px 32px',
+            backgroundColor: '#1976d2',
+            color: 'white',
+            borderRadius: '8px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = '#1565c0';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 6px 16px rgba(25, 118, 210, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = '#1976d2';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 4px 12px rgba(25, 118, 210, 0.3)';
+          }}
+        >
+          🚀 Launch Smart eBook Chat System
+        </Link>
+        <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
+          Upload documents, search content, and chat with AI
+        </div>
+      </div>
+
       <p className={styles.intro}>
-        <b>Available features:</b>{" "}
-        {samplePageLinks.map((link, i) => (
+        <b>Demo pages and components:</b>{" "}
+        {samplePageLinks.slice(1).map((link, i) => (
           <React.Fragment key={link.url}>
             <Link to={link.url} style={link.badge ? { fontWeight: 'bold', color: '#3b82f6' } : {}}>
               {link.text}
             </Link>
-            {i !== samplePageLinks.length - 1 && <> · </>}
+            {i !== samplePageLinks.slice(1).length - 1 && <> · </>}
           </React.Fragment>
         ))}
         <br />

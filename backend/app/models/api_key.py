@@ -84,7 +84,7 @@ class APIKey(Base):
     deleted_at = Column(DateTime(timezone=True), nullable=True, index=True)
     
     # Additional metadata
-    metadata = Column(JSONB, nullable=True)  # Provider-specific settings, rate limits, etc.
+    provider_metadata = Column(JSONB, nullable=True)  # Provider-specific settings, rate limits, etc.
     
     # Relationships
     user = relationship("User", back_populates="api_keys")
@@ -211,7 +211,7 @@ class APIKeyUsageLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     
     # Additional metadata
-    metadata = Column(JSONB, nullable=True)  # Request parameters, response details, etc.
+    request_metadata = Column(JSONB, nullable=True)  # Request parameters, response details, etc.
     
     # Relationships
     api_key = relationship("APIKey", back_populates="usage_logs")
@@ -260,7 +260,7 @@ class APIKeyValidation(Base):
     validated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     
     # Additional metadata
-    metadata = Column(JSONB, nullable=True)
+    validation_metadata = Column(JSONB, nullable=True)
     
     # Relationship
     api_key = relationship("APIKey")

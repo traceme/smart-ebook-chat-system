@@ -20,4 +20,5 @@ class User(Base):
     
     # Relationships
     documents = relationship("Document", back_populates="user")
-    subscriptions = relationship("UserSubscription", back_populates="user") 
+    subscriptions = relationship("UserSubscription", back_populates="user")
+    api_keys = relationship("ApiKey", back_populates="user") 
