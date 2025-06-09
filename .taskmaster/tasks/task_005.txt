@@ -1,6 +1,6 @@
 # Task ID: 5
 # Title: Implement API Key Management
-# Status: pending
+# Status: done
 # Dependencies: 3
 # Priority: medium
 # Description: Develop secure storage and management of user LLM API keys with AES-256 encryption and PBKDF2 salting.

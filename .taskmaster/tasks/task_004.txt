@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: Implement Subscription Management
-# Status: in-progress
+# Status: done
 # Dependencies: 3
 # Priority: medium
 # Description: Develop the subscription management system with Free, Pro, and Enterprise tiers, including quota tracking and management.

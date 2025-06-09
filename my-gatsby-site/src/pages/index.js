@@ -91,6 +91,13 @@ const samplePageLinks = [
       "NEW! Interactive chat with streaming responses, markdown rendering, context management, and AI model controls",
   },
   {
+    text: "🔑 API Key Management",
+    url: "api-key-demo",
+    badge: true,
+    description:
+      "NEW! Secure API key management with AES-256 encryption, provider validation, and usage analytics",
+  },
+  {
     text: "🔍 Semantic Search",
     url: "search",
     badge: true,
@@ -158,7 +165,7 @@ const IndexPage = () => (
           </React.Fragment>
         ))}
         <br />
-        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ Task 9 Complete:</span> Semantic search with k=8 retrieval, BGE reranking & context construction.
+        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ Task 5 Complete:</span> API key management with AES-256 encryption, provider validation & usage analytics.
       </p>
     </div>
     <ul className={styles.list}>
