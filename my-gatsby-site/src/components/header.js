@@ -58,6 +58,21 @@ const Header = ({ siteTitle }) => (
           Search
         </Link>
         <Link
+          to="/document-manager-demo"
+          style={{
+            textDecoration: `none`,
+            color: `#7f8c8d`,
+            fontSize: `0.875rem`,
+            fontWeight: `500`,
+            transition: `color 0.2s ease`,
+          }}
+          activeStyle={{
+            color: `#3498db`,
+          }}
+        >
+          📚 Documents
+        </Link>
+        <Link
           to="/usage-indicator-demo"
           style={{
             textDecoration: `none`,
