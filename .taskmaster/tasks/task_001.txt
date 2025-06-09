@@ -1,0 +1,32 @@
+# Task ID: 1
+# Title: Setup Frontend Project Structure
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Initialize the Gatsby v5 project with TypeScript, MUI v6, React Query v5, and other required configurations for the Gmail-style UI.
+# Details:
+Create a new Gatsby v5 project with the following setup:
+1. Initialize with TypeScript configuration
+2. Install and configure MUI v6 with Gmail theme customization
+3. Set up React Query v5 for data fetching
+4. Configure NextAuth.js for authentication
+5. Set up file upload component structure
+6. Configure ESLint and Prettier
+7. Create basic folder structure:
+   - src/components
+   - src/hooks
+   - src/pages
+   - src/services
+   - src/types
+   - src/utils
+   - src/context
+8. Configure package.json with required dependencies and scripts
+9. Set up basic routing structure
+10. Initialize Git repository with appropriate .gitignore
+
+# Test Strategy:
+1. Verify all dependencies install correctly
+2. Run the development server and ensure it starts without errors
+3. Validate TypeScript configuration works correctly
+4. Check ESLint and Prettier configurations apply correctly
+5. Verify the project structure follows the requirements

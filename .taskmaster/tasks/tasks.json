@@ -1,0 +1,483 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Setup Frontend Project Structure",
+      "description": "Initialize the Gatsby v5 project with TypeScript, MUI v6, React Query v5, and other required configurations for the Gmail-style UI.",
+      "details": "Create a new Gatsby v5 project with the following setup:\n1. Initialize with TypeScript configuration\n2. Install and configure MUI v6 with Gmail theme customization\n3. Set up React Query v5 for data fetching\n4. Configure NextAuth.js for authentication\n5. Set up file upload component structure\n6. Configure ESLint and Prettier\n7. Create basic folder structure:\n   - src/components\n   - src/hooks\n   - src/pages\n   - src/services\n   - src/types\n   - src/utils\n   - src/context\n8. Configure package.json with required dependencies and scripts\n9. Set up basic routing structure\n10. Initialize Git repository with appropriate .gitignore",
+      "testStrategy": "1. Verify all dependencies install correctly\n2. Run the development server and ensure it starts without errors\n3. Validate TypeScript configuration works correctly\n4. Check ESLint and Prettier configurations apply correctly\n5. Verify the project structure follows the requirements",
+      "priority": "high",
+      "dependencies": [],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 2,
+      "title": "Setup Backend Project Structure",
+      "description": "Initialize the FastAPI backend project with proper structure, database configurations, Celery setup, and Docker development environment.",
+      "details": "Create a FastAPI project with the following structure and configurations:\n1. Set up project layout:\n   - app/\n     - routers/\n     - services/\n     - models/\n     - workers/\n     - schemas/\n     - core/\n     - main.py\n2. Configure pydantic-settings for environment and configuration management\n3. Set up database models and SQLAlchemy ORM\n4. Configure Alembic for database migrations\n5. Set up Celery for asynchronous task processing\n6. Create Docker Compose configuration for development environment including:\n   - FastAPI service\n   - PostgreSQL database\n   - Redis for Celery and caching\n   - Qdrant for vector storage\n   - MinIO/S3 compatible storage\n7. Configure logging with OpenTelemetry\n8. Set up dependency management with uv\n9. Create basic health check endpoints",
+      "testStrategy": "1. Verify Docker Compose setup works correctly\n2. Test database connection and migrations\n3. Validate Celery worker connects and processes tasks\n4. Check health endpoints return correct status\n5. Verify logging configuration captures appropriate information\n6. Test environment variable configuration loading",
+      "priority": "high",
+      "dependencies": [],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 3,
+      "title": "Implement User Authentication System",
+      "description": "Develop the authentication system with email registration/login, OAuth integration, and multi-factor authentication.",
+      "details": "Implement a complete authentication system:\n\n1. Backend (FastAPI):\n   - Create user model in database\n   - Implement email registration with verification\n   - Set up JWT token generation and validation\n   - Configure OAuth providers (Google/GitHub/Apple)\n   - Implement MFA with TOTP\n   - Create Redis session storage\n   - Set up password reset flow\n   - Implement user profile endpoints\n\n2. Frontend (Gatsby):\n   - Integrate NextAuth.js for authentication\n   - Create login/registration forms\n   - Implement OAuth login buttons\n   - Create MFA setup and verification UI\n   - Build profile management page\n   - Implement protected routes\n   - Add session persistence\n\nEnsure secure password handling with PBKDF2 and proper salting.",
+      "testStrategy": "1. Unit test authentication endpoints\n2. Test OAuth flows with mock providers\n3. Verify JWT token generation and validation\n4. Test MFA setup and verification\n5. Validate password reset flow\n6. Test session management and expiration\n7. Verify protected routes redirect unauthenticated users\n8. Test form validation and error handling",
+      "priority": "high",
+      "dependencies": [
+        1,
+        2
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 4,
+      "title": "Implement Subscription Management",
+      "description": "Develop the subscription management system with Free, Pro, and Enterprise tiers, including quota tracking and management.",
+      "details": "Implement subscription management system:\n\n1. Backend:\n   - Create subscription models in database\n   - Implement quota tracking for uploads and tokens\n   - Create subscription tier logic (Free/Pro/Enterprise)\n   - Set up usage analytics and reporting\n   - Implement quota enforcement middleware\n   - Create subscription management endpoints\n\n2. Frontend:\n   - Build subscription management UI\n   - Create usage visualization components\n   - Implement upgrade/downgrade flows\n   - Add quota indicators throughout the application\n   - Create subscription comparison page\n\nQuota limits per tier:\n- Free: 100MB/month upload, 10k tokens/month\n- Pro: 1GB/month upload, 100k tokens/month\n- Enterprise: Custom quotas, API access",
+      "testStrategy": "1. Test quota tracking accuracy\n2. Verify quota enforcement works correctly\n3. Test subscription tier changes\n4. Validate usage reporting\n5. Test UI components for quota visualization\n6. Verify upgrade/downgrade flows\n7. Test quota reset on billing cycle",
+      "priority": "medium",
+      "dependencies": [
+        3
+      ],
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Database Models for Subscription System",
+          "description": "Design and implement the database models required for the subscription management system, including subscription tiers, user subscriptions, and quota tracking.",
+          "dependencies": [],
+          "details": "Create the following models: SubscriptionTier (with properties for tier name, price, upload quota, token quota), UserSubscription (linking users to their subscription tier with start/end dates), and UsageTracking (to record upload and token usage per user). Include appropriate relationships between models and implement database migrations.",
+          "status": "done",
+          "testStrategy": "Write unit tests to verify model relationships and constraints. Create test fixtures for each subscription tier."
+        },
+        {
+          "id": 2,
+          "title": "Implement Quota Tracking and Enforcement Middleware",
+          "description": "Develop the backend logic to track usage of uploads and tokens, and create middleware to enforce quota limits based on subscription tier.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create services to record and update usage metrics when users upload files or consume tokens. Implement middleware that checks current usage against tier limits before allowing operations. Include logic for the three tiers (Free: 100MB/month upload, 10k tokens/month; Pro: 1GB/month upload, 100k tokens/month; Enterprise: Custom quotas). Add reset logic for monthly quotas.",
+          "status": "done",
+          "testStrategy": "Test quota enforcement with mock requests that would exceed limits. Verify usage tracking accuracy with integration tests."
+        },
+        {
+          "id": 3,
+          "title": "Develop Subscription Management API Endpoints",
+          "description": "Create RESTful API endpoints for managing subscriptions, including subscription creation, upgrades, downgrades, and retrieving usage statistics.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement endpoints for: subscribing to a plan, changing subscription tier, viewing current usage, retrieving subscription details, and canceling subscriptions. Include validation logic and appropriate error handling. For Enterprise tier, add endpoints to customize quota limits. Ensure proper authentication and authorization checks.",
+          "status": "done",
+          "testStrategy": "Create API tests for each endpoint covering successful operations and error cases. Test subscription lifecycle from creation through cancellation."
+        },
+        {
+          "id": 4,
+          "title": "Build Subscription Management UI Components",
+          "description": "Develop frontend components for displaying and managing user subscriptions, including current plan details and usage statistics.",
+          "dependencies": [
+            3
+          ],
+          "details": "Create a subscription dashboard component showing current plan, billing information, and usage metrics. Implement UI for viewing subscription details, payment history, and account limits. Design responsive layouts that work across device sizes. Use charts/graphs to visualize usage data clearly.",
+          "status": "in-progress",
+          "testStrategy": "Write component tests to verify rendering and user interactions. Test responsive behavior across different viewport sizes."
+        },
+        {
+          "id": 5,
+          "title": "Implement Subscription Upgrade/Downgrade Flow",
+          "description": "Create the user interface and backend logic for upgrading or downgrading subscription tiers, including confirmation workflows and pro-rating logic.",
+          "dependencies": [
+            3,
+            4
+          ],
+          "details": "Build a tier comparison page showing features and limits of each plan. Implement a step-by-step upgrade/downgrade wizard with confirmation steps. Add backend logic for handling subscription changes, including pro-rating calculations and effective date handling. For downgrades, implement warnings about potential data loss if usage exceeds new tier limits.",
+          "status": "pending",
+          "testStrategy": "Test the complete upgrade/downgrade flow with different scenarios. Verify pro-rating calculations and effective date handling."
+        },
+        {
+          "id": 6,
+          "title": "Integrate Usage Indicators Throughout Application",
+          "description": "Add quota indicators and usage warnings throughout the application to provide users with visibility into their current usage and limits.",
+          "dependencies": [
+            2,
+            4
+          ],
+          "details": "Create a global usage indicator component showing current usage percentages. Add contextual warnings when users approach quota limits (e.g., at 80% usage). Integrate quota indicators in the file upload interface and token consumption areas. Implement notification system for quota limit warnings. For Enterprise tier, add detailed usage analytics dashboard.",
+          "status": "pending",
+          "testStrategy": "Test indicator visibility at different usage levels. Verify warning thresholds trigger appropriately. Test user experience when quotas are nearly exhausted and when fully exhausted."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Implement API Key Management",
+      "description": "Develop secure storage and management of user LLM API keys with AES-256 encryption and PBKDF2 salting.",
+      "details": "Implement secure API key management:\n\n1. Backend:\n   - Create encrypted API key storage in database\n   - Implement AES-256 encryption for keys\n   - Set up PBKDF2 key derivation with salting\n   - Create key validation endpoints\n   - Implement key rotation and management\n   - Set up secure key retrieval\n\n2. Frontend:\n   - Build API key management UI\n   - Create secure input components\n   - Implement key validation\n   - Add provider-specific instructions\n   - Create key usage analytics\n\nEnsure keys are never logged or exposed in plaintext. Implement proper key validation before storage.",
+      "testStrategy": "1. Test encryption and decryption of API keys\n2. Verify keys cannot be retrieved in plaintext\n3. Test key validation with provider APIs\n4. Validate security of key storage\n5. Test key rotation functionality\n6. Verify UI properly masks key values\n7. Test error handling for invalid keys",
+      "priority": "medium",
+      "dependencies": [
+        3
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "Implement Document Upload Service",
+      "description": "Develop the document upload service with chunked uploads, resumable transfers, deduplication, and progress tracking.",
+      "details": "Implement document upload service:\n\n1. Backend:\n   - Create S3/MinIO integration for storage\n   - Implement presigned URL generation\n   - Set up SHA-256 deduplication checking\n   - Create document metadata storage\n   - Implement upload status tracking\n   - Set up WebSocket for progress updates\n   - Configure virus scanning integration\n\n2. Frontend:\n   - Build chunked upload component (5MB chunks)\n   - Implement drag-and-drop interface\n   - Create resumable upload logic\n   - Add progress visualization\n   - Implement retry mechanism\n   - Create file type validation\n\nSupport multiple file formats: PDF, EPUB, TXT, DOCX. Implement proper error handling for network interruptions and file validation failures.",
+      "testStrategy": "1. Test chunked upload with various file sizes\n2. Verify resumable uploads work after interruption\n3. Test deduplication with identical files\n4. Validate progress reporting accuracy\n5. Test concurrent uploads\n6. Verify file type validation\n7. Test error handling for invalid files\n8. Measure upload performance against KPI targets",
+      "priority": "high",
+      "dependencies": [
+        2,
+        3
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "Implement Document Conversion Worker",
+      "description": "Develop the Celery worker for converting various document formats to Markdown using MarkItDown integration.",
+      "details": "Implement document conversion worker:\n\n1. Celery Worker:\n   - Create Celery task for document conversion\n   - Implement MarkItDown API integration\n   - Set up format-specific conversion handlers\n   - Implement retry mechanism (max 3 attempts)\n   - Create conversion status updates\n   - Set up error logging and monitoring\n   - Implement result storage to S3/MinIO\n\n2. Backend API:\n   - Create conversion trigger endpoint\n   - Implement conversion status endpoint\n   - Set up webhook for conversion completion\n\nSupport conversion from PDF, EPUB, TXT, DOCX to Markdown format. Preserve page headers, footers, and image placeholders. Implement proper error handling for OCR failures and other conversion issues.",
+      "testStrategy": "1. Test conversion with various document formats\n2. Verify conversion quality meets requirements\n3. Test retry mechanism with simulated failures\n4. Validate conversion status updates\n5. Measure conversion time against KPI targets\n6. Test error handling for corrupt files\n7. Verify preservation of document structure\n8. Test concurrent conversion processing",
+      "priority": "high",
+      "dependencies": [
+        2,
+        6
+      ],
+      "status": "done",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "Implement Vector Indexing Service",
+      "description": "Develop the vector indexing service using memvidg for document chunking, embedding generation, and storage in Qdrant.",
+      "details": "Implement vector indexing service:\n\n1. Celery Worker:\n   - Create Celery task for document vectorization\n   - Implement memvidg integration for text chunking\n   - Set up text-embedding-3 API integration\n   - Create Qdrant storage integration\n   - Implement batch processing for efficiency\n   - Set up indexing status updates\n   - Create metadata indexing\n\n2. Backend API:\n   - Create vectorization trigger endpoint\n   - Implement indexing status endpoint\n   - Set up webhook for indexing completion\n\nImplement chunking with 1-2k token size. Use text-embedding-3 model for vectorization. Store vectors in Qdrant with proper metadata. Handle long documents with automatic pagination.",
+      "testStrategy": "1. Test vectorization with various document sizes\n2. Verify chunking produces appropriate segments\n3. Test embedding generation quality\n4. Validate vector storage in Qdrant\n5. Measure indexing performance against KPI targets\n6. Test concurrent indexing operations\n7. Verify metadata is correctly associated with vectors\n8. Test handling of extremely large documents",
+      "priority": "high",
+      "dependencies": [
+        2,
+        7
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Document Chunking Module",
+          "description": "Create a module that handles document chunking with appropriate token size limits for optimal embedding generation.",
+          "dependencies": [],
+          "details": "Develop a Python module that takes documents as input and splits them into chunks of 1-2k tokens. Implement logic to handle different document types (PDF, text, etc.). Ensure chunk overlap to maintain context between chunks. Create utility functions for token counting and boundary detection to avoid cutting sentences in the middle.",
+          "status": "done",
+          "testStrategy": "Test with various document types and sizes to ensure proper chunking. Verify token counts are within specified limits. Check that semantic integrity is maintained across chunk boundaries."
+        },
+        {
+          "id": 2,
+          "title": "Implement OpenAI Embedding Generation",
+          "description": "Create a service to generate embeddings from document chunks using OpenAI's text-embedding-3 model.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement an API client for OpenAI's embedding service. Create a function that takes text chunks and returns vector embeddings. Implement rate limiting and error handling for API calls. Set up caching to avoid regenerating embeddings for identical content. Configure batch processing to optimize API usage and costs.",
+          "status": "done",
+          "testStrategy": "Test embedding generation with various text inputs. Verify embedding dimensions match expectations. Test error handling with simulated API failures. Benchmark performance with different batch sizes."
+        },
+        {
+          "id": 3,
+          "title": "Implement Qdrant Storage Integration",
+          "description": "Develop integration with Qdrant vector database for storing and retrieving embeddings and metadata.",
+          "dependencies": [
+            2
+          ],
+          "details": "Set up Qdrant client configuration. Create functions for creating collections with appropriate vector dimensions and distance metrics. Implement methods for storing vectors with associated metadata (document ID, chunk index, source text, etc.). Develop query functions for vector similarity search. Implement pagination for large result sets.",
+          "status": "done",
+          "testStrategy": "Test vector storage and retrieval with sample embeddings. Verify metadata is correctly associated with vectors. Test similarity search with known similar content. Benchmark query performance with various collection sizes."
+        },
+        {
+          "id": 4,
+          "title": "Implement Celery Worker for Vectorization",
+          "description": "Create a Celery task worker that orchestrates the document processing pipeline from chunking to storage.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Set up Celery configuration with appropriate queues and concurrency settings. Implement a task that processes documents through the chunking, embedding, and storage pipeline. Add progress tracking and status updates. Implement error handling and retries for failed steps. Set up logging for monitoring and debugging.",
+          "status": "done",
+          "testStrategy": "Test end-to-end document processing with various document sizes. Verify task status updates work correctly. Test error handling with simulated failures at different stages. Benchmark performance with concurrent task execution."
+        },
+        {
+          "id": 5,
+          "title": "Implement Backend API Endpoints",
+          "description": "Develop REST API endpoints for triggering vectorization, checking status, and receiving completion notifications.",
+          "dependencies": [
+            4
+          ],
+          "details": "Create a vectorization trigger endpoint that accepts document uploads or references. Implement a status endpoint to check progress of vectorization tasks. Develop a webhook configuration endpoint for receiving completion notifications. Add authentication and rate limiting to protect the API. Implement input validation and error handling.",
+          "status": "done",
+          "testStrategy": "Test API endpoints with valid and invalid requests. Verify authentication and rate limiting work correctly. Test status updates through the complete vectorization process. Verify webhook notifications are sent correctly upon completion."
+        },
+        {
+          "id": 6,
+          "title": "Implement Metadata Indexing and Search Features",
+          "description": "Enhance the vector indexing service with metadata filtering and hybrid search capabilities.",
+          "dependencies": [
+            3,
+            5
+          ],
+          "details": "Extend the Qdrant integration to support filtering by metadata fields. Implement hybrid search combining vector similarity with metadata filters. Add functionality for updating and deleting indexed documents. Create utilities for reindexing documents when embedding models change. Implement search result ranking and scoring.",
+          "status": "done",
+          "testStrategy": "Test metadata filtering with various filter combinations. Verify hybrid search returns expected results. Test document updates and deletions. Benchmark search performance with complex queries. Verify reindexing functionality works correctly."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Implement Semantic Search and Retrieval",
+      "description": "Develop the semantic search API with vector similarity search, reranking, and context window construction.",
+      "details": "Implement semantic search and retrieval:\n\n1. Backend:\n   - Create vector similarity search endpoint\n   - Implement BGE reranker integration\n   - Set up context window construction\n   - Create reference extraction and formatting\n   - Implement search filters\n   - Set up search analytics\n\n2. Frontend:\n   - Build search interface\n   - Create search results visualization\n   - Implement search filters UI\n   - Add search history\n   - Create search suggestions\n\nImplement k=8 initial retrieval followed by reranking with bge-reranker-base. Extract page references and construct appropriate context windows for LLM processing.",
+      "testStrategy": "1. Test search accuracy with known documents\n2. Verify reranking improves result quality\n3. Measure search performance against KPI targets\n4. Test reference extraction accuracy\n5. Validate context window construction\n6. Test search with various query types\n7. Verify search filters work correctly\n8. Measure Top-3 retrieval accuracy against 92% target",
+      "priority": "high",
+      "dependencies": [
+        8
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Vector Similarity Search Endpoint",
+          "description": "Create a backend API endpoint that performs vector similarity search against the document embeddings database.",
+          "dependencies": [],
+          "details": "Develop a REST endpoint that accepts search queries, converts them to embeddings using the same model used for document indexing, and performs a k-nearest neighbors search (k=8) against the vector database. Return the top k results with their similarity scores and metadata. Use an efficient vector database like FAISS, Pinecone, or Milvus for the implementation.",
+          "status": "done",
+          "testStrategy": "Test with various queries to ensure relevant results are returned. Measure response times and verify that exactly k=8 results are returned. Create unit tests with mock vector database responses."
+        },
+        {
+          "id": 2,
+          "title": "Integrate BGE Reranker",
+          "description": "Implement the BGE reranker integration to improve search result relevance by reordering the initial vector search results.",
+          "dependencies": [
+            1
+          ],
+          "details": "Use the bge-reranker-base model to rerank the initial k=8 results from the vector search. The reranker should take both the original query and each retrieved passage, compute a relevance score, and reorder the results accordingly. Implement caching to avoid recomputing scores for identical query-passage pairs. Ensure the reranker API is properly integrated with the search endpoint.",
+          "status": "done",
+          "testStrategy": "Compare pre-reranking and post-reranking results to verify improvement in result ordering. Test with edge cases like very short or very long queries. Measure reranking latency."
+        },
+        {
+          "id": 3,
+          "title": "Implement Context Window Construction",
+          "description": "Create a system to construct appropriate context windows from the retrieved and reranked search results for LLM processing.",
+          "dependencies": [
+            2
+          ],
+          "details": "Develop logic to combine the reranked search results into a coherent context window for the LLM. Implement strategies for handling context length limitations, such as truncation or summarization. Include metadata about each passage's source. Ensure the context window maintains the reranked order of importance and preserves document boundaries where appropriate.",
+          "status": "done",
+          "testStrategy": "Verify that constructed context windows stay within token limits. Test with various combinations of search results to ensure coherent assembly. Check that source metadata is preserved correctly."
+        },
+        {
+          "id": 4,
+          "title": "Create Reference Extraction and Formatting",
+          "description": "Implement a system to extract and format page references and citations from search results.",
+          "dependencies": [
+            3
+          ],
+          "details": "Develop functionality to extract page numbers, section titles, and other reference information from the search results. Create a standardized format for presenting these references to users. Implement logic to deduplicate references and merge adjacent page references. Ensure references are linked back to the original documents for verification.",
+          "status": "done",
+          "testStrategy": "Test with documents having various citation formats. Verify that references are correctly extracted and formatted. Check that references accurately point to the source material."
+        },
+        {
+          "id": 5,
+          "title": "Implement Search Filters and Analytics",
+          "description": "Add filtering capabilities to the search API and implement analytics tracking for search queries and results.",
+          "dependencies": [
+            1
+          ],
+          "details": "Extend the search API to support filtering by document metadata (date, author, category, etc.). Implement server-side filtering logic that works efficiently with vector search. Create an analytics system to track search queries, clicked results, and search performance metrics. Store analytics data in a structured format for later analysis.",
+          "status": "done",
+          "testStrategy": "Test filters with various combinations to ensure correct results. Verify that analytics data is properly captured and stored. Check that filtering doesn't significantly impact search performance."
+        },
+        {
+          "id": 6,
+          "title": "Build Search Interface and Results Visualization",
+          "description": "Develop the frontend search interface with results visualization, filters UI, search history, and suggestions.",
+          "dependencies": [
+            4,
+            5
+          ],
+          "details": "Create a responsive search interface with an input box, filters panel, and results display. Implement results visualization that highlights matching text and shows relevance scores. Add a search history feature that stores recent searches. Develop search suggestions based on partial input and popular searches. Ensure the UI provides clear access to reference information and context.",
+          "status": "done",
+          "testStrategy": "Conduct usability testing with various search scenarios. Test responsive design on different screen sizes. Verify that all UI elements correctly interact with the backend API. Test search history persistence and suggestions functionality."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Implement LLM Provider Abstraction",
+      "description": "Develop the unified LLM provider interface supporting OpenAI, Claude, and Gemini models with cost estimation.",
+      "details": "Implement LLM provider abstraction:\n\n1. Backend:\n   - Create LLMProvider abstract base class\n   - Implement OpenAIProvider (GPT-4o support)\n   - Implement ClaudeProvider (Claude-3.5 support)\n   - Implement GeminiProvider (Gemini-2.5-pro support)\n   - Create unified completion interface\n   - Set up streaming response handling\n   - Implement token counting and cost estimation\n   - Create provider selection logic\n   - Set up fallback mechanisms\n\nEnsure consistent interface across providers with support for temperature control, max tokens, and streaming responses. Implement proper error handling and rate limiting.",
+      "testStrategy": "1. Test each provider with various prompts\n2. Verify streaming works consistently\n3. Test token counting accuracy\n4. Validate cost estimation\n5. Test fallback mechanisms\n6. Verify error handling for API failures\n7. Measure response times against KPI targets\n8. Test concurrent requests handling",
+      "priority": "high",
+      "dependencies": [
+        2,
+        5
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "Implement Chat System with Context Management",
+      "description": "Develop the chat system with sliding window history, token management, and reference tracking.",
+      "details": "Implement chat system with context management:\n\n1. Backend:\n   - Create chat session management\n   - Implement sliding window history (20 messages)\n   - Set up token counting and context pruning\n   - Create reference tracking and formatting\n   - Implement prompt construction\n   - Set up SSE for streaming responses\n   - Create chat analytics\n\n2. Frontend:\n   - Build chat interface with Markdown support\n   - Implement streaming message display\n   - Create reference display with highlighting\n   - Add message history navigation\n   - Implement context management UI\n\nEnsure proper token management to prevent context overflow. Track and display references to source material. Support streaming responses with server-sent events.",
+      "testStrategy": "1. Test chat with various conversation lengths\n2. Verify token management prevents overflow\n3. Test reference tracking accuracy\n4. Validate streaming response handling\n5. Measure response times against KPI targets\n6. Test conversation history navigation\n7. Verify context pruning maintains coherence\n8. Test concurrent chat sessions",
+      "priority": "high",
+      "dependencies": [
+        9,
+        10
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "Implement Gmail-style Layout Components",
+      "description": "Develop the core UI layout components following Gmail design patterns with responsive design.",
+      "details": "Implement Gmail-style layout components:\n\n1. Core Layout:\n   - Create top navigation bar with search\n   - Implement left sidebar with document list\n   - Build main content area\n   - Create right drawer for settings\n   - Implement responsive breakpoints (≥360px)\n\n2. Components:\n   - Build document list with virtual scrolling\n   - Create tag tree with collapsible sections\n   - Implement search bar with autocomplete\n   - Build user menu and settings panel\n   - Create document preview with lazy loading\n   - Implement chat panel with Markdown support\n\nUse MUI v6 components with Gmail theme customization. Implement Framer Motion for animations. Ensure keyboard navigation support throughout the interface.",
+      "testStrategy": "1. Test responsive behavior at various breakpoints\n2. Verify keyboard navigation works correctly\n3. Test virtual scrolling with large document lists\n4. Validate lazy loading of document previews\n5. Test animations and transitions\n6. Verify theme consistency across components\n7. Test accessibility compliance\n8. Verify component rendering performance",
+      "priority": "medium",
+      "dependencies": [
+        1
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 13,
+      "title": "Implement Document Management UI",
+      "description": "Develop the document management interface with list view, tagging, filtering, and preview functionality.",
+      "details": "Implement document management UI:\n\n1. Document List:\n   - Create document list component with virtual scrolling\n   - Implement sorting and filtering\n   - Build tagging and organization system\n   - Create document status indicators\n   - Implement search and filtering\n\n2. Document Actions:\n   - Build document preview\n   - Implement document sharing\n   - Create document deletion and archiving\n   - Build document metadata editing\n   - Implement batch operations\n\n3. Document Upload:\n   - Create upload modal/page\n   - Implement drag-and-drop interface\n   - Build upload progress visualization\n   - Create file type validation\n\nEnsure smooth transitions and responsive design. Implement keyboard shortcuts for common actions.",
+      "testStrategy": "1. Test document list with various quantities\n2. Verify sorting and filtering functionality\n3. Test tagging and organization\n4. Validate document preview rendering\n5. Test document actions (share, delete, archive)\n6. Verify upload interface with various file types\n7. Test keyboard shortcuts\n8. Verify responsive behavior",
+      "priority": "medium",
+      "dependencies": [
+        6,
+        7,
+        12
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 14,
+      "title": "Implement Chat Interface",
+      "description": "Develop the chat interface with streaming responses, Markdown rendering, reference highlighting, and model switching.",
+      "details": "Implement chat interface:\n\n1. Chat UI:\n   - Create message list with user/assistant distinction\n   - Implement Markdown rendering\n   - Build code block syntax highlighting\n   - Create reference highlighting and linking\n   - Implement streaming message display\n   - Build input area with suggestions\n\n2. Chat Controls:\n   - Create model selector\n   - Implement temperature control\n   - Build conversation management\n   - Create export functionality\n   - Implement share options\n\n3. Context Management:\n   - Build context viewer\n   - Implement history navigation\n   - Create context editing\n\nEnsure smooth streaming of responses with proper Markdown rendering. Implement reference highlighting that links back to source material.",
+      "testStrategy": "1. Test chat interface with various message types\n2. Verify Markdown rendering accuracy\n3. Test code block syntax highlighting\n4. Validate reference highlighting and linking\n5. Test streaming message display\n6. Verify model selection functionality\n7. Test conversation management\n8. Verify context viewing and editing",
+      "priority": "high",
+      "dependencies": [
+        11,
+        12
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 15,
+      "title": "Implement Settings and Preferences",
+      "description": "Develop the settings interface for user preferences, model configuration, and API key management.",
+      "details": "Implement settings and preferences:\n\n1. User Settings:\n   - Create profile settings\n   - Implement theme preferences\n   - Build notification settings\n   - Create language preferences\n   - Implement keyboard shortcuts configuration\n\n2. Model Settings:\n   - Build model selection interface\n   - Create default parameters configuration\n   - Implement API key management\n   - Build usage analytics\n\n3. Application Settings:\n   - Create document processing preferences\n   - Implement search configuration\n   - Build export settings\n   - Create sharing preferences\n\nEnsure settings are persisted and applied consistently across the application. Implement proper validation for all settings.",
+      "testStrategy": "1. Test settings persistence\n2. Verify theme changes apply correctly\n3. Test API key management\n4. Validate model selection and configuration\n5. Test keyboard shortcuts configuration\n6. Verify language preference application\n7. Test document processing preferences\n8. Verify settings export/import",
+      "priority": "medium",
+      "dependencies": [
+        5,
+        10,
+        12
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 16,
+      "title": "Implement Monitoring and Analytics",
+      "description": "Develop the monitoring and analytics system with Prometheus, Grafana, and OpenTelemetry integration.",
+      "details": "Implement monitoring and analytics:\n\n1. Metrics Collection:\n   - Set up Prometheus metrics\n   - Implement OpenTelemetry tracing\n   - Create custom business metrics\n   - Build performance monitoring\n   - Implement error tracking\n\n2. Visualization:\n   - Create Grafana dashboards (5 total)\n   - Implement alerting rules\n   - Build SLA monitoring\n   - Create cost tracking\n\n3. Logging:\n   - Set up structured logging\n   - Implement log aggregation\n   - Create log search and analysis\n   - Build audit logging\n\nTrack key metrics including API latency (P50/P95/P99), conversion success rate, queue backlog, error rates, and resource utilization. Create business metrics for DAU, document uploads, chat sessions, and model usage distribution.",
+      "testStrategy": "1. Verify metrics collection accuracy\n2. Test tracing for request flows\n3. Validate dashboard visualizations\n4. Test alerting rules\n5. Verify log collection and aggregation\n6. Test audit logging for security events\n7. Validate cost tracking accuracy\n8. Test SLA monitoring against targets",
+      "priority": "medium",
+      "dependencies": [
+        2,
+        7,
+        8,
+        11
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 17,
+      "title": "Implement Testing Framework",
+      "description": "Develop comprehensive testing framework with unit, integration, E2E, and performance tests.",
+      "details": "Implement testing framework:\n\n1. Unit Testing:\n   - Set up pytest for backend\n   - Implement react-testing-library for frontend\n   - Create mock services and data\n   - Build test utilities\n\n2. Integration Testing:\n   - Set up API testing framework\n   - Implement database integration tests\n   - Create service integration tests\n   - Build end-to-end flows\n\n3. E2E Testing:\n   - Set up Playwright for E2E tests\n   - Implement critical user journeys\n   - Create visual regression tests\n   - Build accessibility tests\n\n4. Performance Testing:\n   - Set up Locust for load testing\n   - Implement benchmark tests\n   - Create scalability tests\n   - Build stress tests\n\nAim for >80% test coverage for core functionality. Implement CI pipeline integration for automated testing.",
+      "testStrategy": "1. Verify unit test coverage meets targets\n2. Test integration test reliability\n3. Validate E2E test coverage of critical paths\n4. Test performance testing accuracy\n5. Verify CI pipeline integration\n6. Test reporting and visualization\n7. Validate test isolation and independence\n8. Verify test performance and execution time",
+      "priority": "medium",
+      "dependencies": [
+        2,
+        11,
+        14
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 18,
+      "title": "Implement Deployment Configuration",
+      "description": "Develop deployment configurations for Docker, Kubernetes, and CI/CD pipelines.",
+      "details": "Implement deployment configuration:\n\n1. Docker:\n   - Create multi-stage Dockerfiles for frontend and backend\n   - Implement docker-compose for local development\n   - Build production-ready images\n   - Create image optimization\n\n2. Kubernetes:\n   - Implement Kubernetes manifests\n   - Create Helm charts\n   - Build autoscaling configuration\n   - Implement resource limits and requests\n\n3. CI/CD:\n   - Set up GitHub Actions workflows\n   - Implement testing pipeline\n   - Create deployment pipeline\n   - Build release management\n\n4. Infrastructure as Code:\n   - Implement Terraform configurations\n   - Create AWS/GCP/Azure templates\n   - Build environment management\n   - Implement secret management\n\nEnsure configurations support development, staging, and production environments. Implement proper security practices throughout.",
+      "testStrategy": "1. Test Docker builds in CI environment\n2. Verify Kubernetes deployments\n3. Test CI/CD pipelines\n4. Validate infrastructure provisioning\n5. Test environment isolation\n6. Verify secret management\n7. Test deployment rollbacks\n8. Validate resource scaling",
+      "priority": "medium",
+      "dependencies": [
+        2,
+        16,
+        17
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 19,
+      "title": "Implement Security Measures",
+      "description": "Develop comprehensive security measures including encryption, authentication, authorization, and vulnerability scanning.",
+      "details": "Implement security measures:\n\n1. Data Security:\n   - Implement AES-256 encryption for sensitive data\n   - Set up PBKDF2 key derivation\n   - Create secure storage for API keys\n   - Implement data isolation\n\n2. Authentication & Authorization:\n   - Enhance JWT implementation\n   - Create role-based access control\n   - Implement IP-based restrictions\n   - Build audit logging\n\n3. Network Security:\n   - Set up TLS configuration\n   - Implement API rate limiting\n   - Create WAF rules\n   - Build DDoS protection\n\n4. Vulnerability Management:\n   - Set up dependency scanning\n   - Implement SAST/DAST\n   - Create security testing\n   - Build vulnerability disclosure process\n\nImplement OWASP Top 10 protections. Create security documentation and incident response procedures.",
+      "testStrategy": "1. Test encryption implementation\n2. Verify authentication security\n3. Test authorization controls\n4. Validate rate limiting\n5. Test dependency scanning\n6. Verify SAST/DAST integration\n7. Test security headers\n8. Validate audit logging for security events",
+      "priority": "high",
+      "dependencies": [
+        3,
+        5,
+        18
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 20,
+      "title": "Implement Documentation and User Guides",
+      "description": "Develop comprehensive documentation including API references, user guides, and developer documentation.",
+      "details": "Implement documentation and user guides:\n\n1. User Documentation:\n   - Create getting started guide\n   - Implement feature documentation\n   - Build troubleshooting guide\n   - Create FAQ section\n\n2. Developer Documentation:\n   - Set up API reference\n   - Implement architecture documentation\n   - Create contribution guidelines\n   - Build plugin development guide\n\n3. Operations Documentation:\n   - Create deployment guide\n   - Implement monitoring documentation\n   - Build incident response procedures\n   - Create backup and recovery documentation\n\n4. Internal Documentation:\n   - Set up code documentation\n   - Implement design decisions\n   - Create technical debt tracking\n   - Build knowledge base\n\nUse Markdown for all documentation. Implement versioning for API documentation. Create interactive examples where appropriate.",
+      "testStrategy": "1. Verify documentation accuracy\n2. Test documentation links\n3. Validate API reference against implementation\n4. Test interactive examples\n5. Verify documentation versioning\n6. Test documentation search\n7. Validate documentation completeness\n8. Test documentation accessibility",
+      "priority": "medium",
+      "dependencies": [
+        18,
+        19
+      ],
+      "status": "pending",
+      "subtasks": []
+    }
+  ]
+}

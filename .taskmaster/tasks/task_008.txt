@@ -1,0 +1,72 @@
+# Task ID: 8
+# Title: Implement Vector Indexing Service
+# Status: done
+# Dependencies: 2, 7
+# Priority: high
+# Description: Develop the vector indexing service using memvidg for document chunking, embedding generation, and storage in Qdrant.
+# Details:
+Implement vector indexing service:
+
+1. Celery Worker:
+   - Create Celery task for document vectorization
+   - Implement memvidg integration for text chunking
+   - Set up text-embedding-3 API integration
+   - Create Qdrant storage integration
+   - Implement batch processing for efficiency
+   - Set up indexing status updates
+   - Create metadata indexing
+
+2. Backend API:
+   - Create vectorization trigger endpoint
+   - Implement indexing status endpoint
+   - Set up webhook for indexing completion
+
+Implement chunking with 1-2k token size. Use text-embedding-3 model for vectorization. Store vectors in Qdrant with proper metadata. Handle long documents with automatic pagination.
+
+# Test Strategy:
+1. Test vectorization with various document sizes
+2. Verify chunking produces appropriate segments
+3. Test embedding generation quality
+4. Validate vector storage in Qdrant
+5. Measure indexing performance against KPI targets
+6. Test concurrent indexing operations
+7. Verify metadata is correctly associated with vectors
+8. Test handling of extremely large documents
+
+# Subtasks:
+## 1. Implement Document Chunking Module [done]
+### Dependencies: None
+### Description: Create a module that handles document chunking with appropriate token size limits for optimal embedding generation.
+### Details:
+Develop a Python module that takes documents as input and splits them into chunks of 1-2k tokens. Implement logic to handle different document types (PDF, text, etc.). Ensure chunk overlap to maintain context between chunks. Create utility functions for token counting and boundary detection to avoid cutting sentences in the middle.
+
+## 2. Implement OpenAI Embedding Generation [done]
+### Dependencies: 8.1
+### Description: Create a service to generate embeddings from document chunks using OpenAI's text-embedding-3 model.
+### Details:
+Implement an API client for OpenAI's embedding service. Create a function that takes text chunks and returns vector embeddings. Implement rate limiting and error handling for API calls. Set up caching to avoid regenerating embeddings for identical content. Configure batch processing to optimize API usage and costs.
+
+## 3. Implement Qdrant Storage Integration [done]
+### Dependencies: 8.2
+### Description: Develop integration with Qdrant vector database for storing and retrieving embeddings and metadata.
+### Details:
+Set up Qdrant client configuration. Create functions for creating collections with appropriate vector dimensions and distance metrics. Implement methods for storing vectors with associated metadata (document ID, chunk index, source text, etc.). Develop query functions for vector similarity search. Implement pagination for large result sets.
+
+## 4. Implement Celery Worker for Vectorization [done]
+### Dependencies: 8.1, 8.2, 8.3
+### Description: Create a Celery task worker that orchestrates the document processing pipeline from chunking to storage.
+### Details:
+Set up Celery configuration with appropriate queues and concurrency settings. Implement a task that processes documents through the chunking, embedding, and storage pipeline. Add progress tracking and status updates. Implement error handling and retries for failed steps. Set up logging for monitoring and debugging.
+
+## 5. Implement Backend API Endpoints [done]
+### Dependencies: 8.4
+### Description: Develop REST API endpoints for triggering vectorization, checking status, and receiving completion notifications.
+### Details:
+Create a vectorization trigger endpoint that accepts document uploads or references. Implement a status endpoint to check progress of vectorization tasks. Develop a webhook configuration endpoint for receiving completion notifications. Add authentication and rate limiting to protect the API. Implement input validation and error handling.
+
+## 6. Implement Metadata Indexing and Search Features [done]
+### Dependencies: 8.3, 8.5
+### Description: Enhance the vector indexing service with metadata filtering and hybrid search capabilities.
+### Details:
+Extend the Qdrant integration to support filtering by metadata fields. Implement hybrid search combining vector similarity with metadata filters. Add functionality for updating and deleting indexed documents. Create utilities for reindexing documents when embedding models change. Implement search result ranking and scoring.
+

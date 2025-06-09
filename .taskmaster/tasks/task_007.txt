@@ -1,0 +1,34 @@
+# Task ID: 7
+# Title: Implement Document Conversion Worker
+# Status: done
+# Dependencies: 2, 6
+# Priority: high
+# Description: Develop the Celery worker for converting various document formats to Markdown using MarkItDown integration.
+# Details:
+Implement document conversion worker:
+
+1. Celery Worker:
+   - Create Celery task for document conversion
+   - Implement MarkItDown API integration
+   - Set up format-specific conversion handlers
+   - Implement retry mechanism (max 3 attempts)
+   - Create conversion status updates
+   - Set up error logging and monitoring
+   - Implement result storage to S3/MinIO
+
+2. Backend API:
+   - Create conversion trigger endpoint
+   - Implement conversion status endpoint
+   - Set up webhook for conversion completion
+
+Support conversion from PDF, EPUB, TXT, DOCX to Markdown format. Preserve page headers, footers, and image placeholders. Implement proper error handling for OCR failures and other conversion issues.
+
+# Test Strategy:
+1. Test conversion with various document formats
+2. Verify conversion quality meets requirements
+3. Test retry mechanism with simulated failures
+4. Validate conversion status updates
+5. Measure conversion time against KPI targets
+6. Test error handling for corrupt files
+7. Verify preservation of document structure
+8. Test concurrent conversion processing

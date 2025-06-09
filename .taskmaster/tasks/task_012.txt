@@ -1,0 +1,35 @@
+# Task ID: 12
+# Title: Implement Gmail-style Layout Components
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Develop the core UI layout components following Gmail design patterns with responsive design.
+# Details:
+Implement Gmail-style layout components:
+
+1. Core Layout:
+   - Create top navigation bar with search
+   - Implement left sidebar with document list
+   - Build main content area
+   - Create right drawer for settings
+   - Implement responsive breakpoints (≥360px)
+
+2. Components:
+   - Build document list with virtual scrolling
+   - Create tag tree with collapsible sections
+   - Implement search bar with autocomplete
+   - Build user menu and settings panel
+   - Create document preview with lazy loading
+   - Implement chat panel with Markdown support
+
+Use MUI v6 components with Gmail theme customization. Implement Framer Motion for animations. Ensure keyboard navigation support throughout the interface.
+
+# Test Strategy:
+1. Test responsive behavior at various breakpoints
+2. Verify keyboard navigation works correctly
+3. Test virtual scrolling with large document lists
+4. Validate lazy loading of document previews
+5. Test animations and transitions
+6. Verify theme consistency across components
+7. Test accessibility compliance
+8. Verify component rendering performance

@@ -1,0 +1,37 @@
+# Task ID: 6
+# Title: Implement Document Upload Service
+# Status: done
+# Dependencies: 2, 3
+# Priority: high
+# Description: Develop the document upload service with chunked uploads, resumable transfers, deduplication, and progress tracking.
+# Details:
+Implement document upload service:
+
+1. Backend:
+   - Create S3/MinIO integration for storage
+   - Implement presigned URL generation
+   - Set up SHA-256 deduplication checking
+   - Create document metadata storage
+   - Implement upload status tracking
+   - Set up WebSocket for progress updates
+   - Configure virus scanning integration
+
+2. Frontend:
+   - Build chunked upload component (5MB chunks)
+   - Implement drag-and-drop interface
+   - Create resumable upload logic
+   - Add progress visualization
+   - Implement retry mechanism
+   - Create file type validation
+
+Support multiple file formats: PDF, EPUB, TXT, DOCX. Implement proper error handling for network interruptions and file validation failures.
+
+# Test Strategy:
+1. Test chunked upload with various file sizes
+2. Verify resumable uploads work after interruption
+3. Test deduplication with identical files
+4. Validate progress reporting accuracy
+5. Test concurrent uploads
+6. Verify file type validation
+7. Test error handling for invalid files
+8. Measure upload performance against KPI targets
