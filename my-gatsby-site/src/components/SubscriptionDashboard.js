@@ -1,316 +1,537 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  LinearProgress,
+  Chip,
+  Button,
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Alert,
+  AlertTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import { styled, alpha } from '@mui/material/styles';
 import './SubscriptionDashboard.css';
 
-const SubscriptionDashboard = () => {
-  const [subscriptionData, setSubscriptionData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [authToken, setAuthToken] = useState('');
+// Icons using Unicode emojis
+const PlanIcon = () => <span style={{ fontSize: '20px' }}>📋</span>;
+const UsageIcon = () => <span style={{ fontSize: '20px' }}>📊</span>;
+const BillingIcon = () => <span style={{ fontSize: '20px' }}>💳</span>;
+const UpgradeIcon = () => <span style={{ fontSize: '18px' }}>⬆️</span>;
+const DownloadIcon = () => <span style={{ fontSize: '16px' }}>📥</span>;
+const TokenIcon = () => <span style={{ fontSize: '16px' }}>🪙</span>;
+const StorageIcon = () => <span style={{ fontSize: '16px' }}>💾</span>;
+const CalendarIcon = () => <span style={{ fontSize: '16px' }}>📅</span>;
+const CheckIcon = () => <span style={{ fontSize: '16px' }}>✅</span>;
+const WarningIcon = () => <span style={{ fontSize: '16px' }}>⚠️</span>;
+const InfoIcon = () => <span style={{ fontSize: '16px' }}>ℹ️</span>;
 
-  useEffect(() => {
-    // Get auth token from localStorage or wherever it's stored
-    const token = localStorage.getItem('authToken') || '';
-    setAuthToken(token);
+// Styled components
+const StyledCard = styled(Card)(({ theme, variant }) => ({
+  height: '100%',
+  transition: 'all 0.2s ease-in-out',
+  border: '1px solid #dadce0',
+  ...(variant === 'primary' && {
+    background: `linear-gradient(135deg, ${alpha('#4285f4', 0.1)} 0%, ${alpha('#34a853', 0.05)} 100%)`,
+    borderColor: '#4285f4',
+  }),
+  ...(variant === 'warning' && {
+    background: `linear-gradient(135deg, ${alpha('#ea4335', 0.1)} 0%, ${alpha('#fbbc04', 0.05)} 100%)`,
+    borderColor: '#ea4335',
+  }),
+  '&:hover': {
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    transform: 'translateY(-2px)',
+  },
+}));
+
+const UsageProgressBar = styled(LinearProgress)(({ theme, severity }) => ({
+  height: '8px',
+  borderRadius: '4px',
+  backgroundColor: alpha('#dadce0', 0.3),
+  '& .MuiLinearProgress-bar': {
+    borderRadius: '4px',
+    backgroundColor: 
+      severity === 'high' ? '#ea4335' :
+      severity === 'medium' ? '#fbbc04' : '#34a853',
+  },
+}));
+
+const PlanBadge = styled(Chip)(({ theme, tier }) => ({
+  fontSize: '12px',
+  fontWeight: 600,
+  height: '24px',
+  ...(tier === 'free' && {
+    backgroundColor: alpha('#5f6368', 0.1),
+    color: '#5f6368',
+  }),
+  ...(tier === 'pro' && {
+    backgroundColor: alpha('#4285f4', 0.1),
+    color: '#4285f4',
+  }),
+  ...(tier === 'enterprise' && {
+    backgroundColor: alpha('#34a853', 0.1),
+    color: '#34a853',
+  }),
+}));
+
+// Subscription plans configuration
+const subscriptionPlans = {
+  free: {
+    name: 'Free',
+    price: 0,
+    uploadLimit: 100, // MB
+    tokenLimit: 10000,
+    features: ['Basic document upload', 'Standard AI processing', 'Community support'],
+    color: '#5f6368',
+  },
+  pro: {
+    name: 'Pro',
+    price: 29,
+    uploadLimit: 1000, // MB (1GB)
+    tokenLimit: 100000,
+    features: ['Priority processing', 'Advanced AI features', 'Email support', 'Export capabilities'],
+    color: '#4285f4',
+  },
+  enterprise: {
+    name: 'Enterprise',
+    price: 99,
+    uploadLimit: 10000, // MB (10GB)
+    tokenLimit: 1000000,
+    features: ['Custom quotas', 'API access', 'Dedicated support', 'Advanced analytics', 'SSO integration'],
+    color: '#34a853',
+  },
+};
+
+const SubscriptionDashboard = ({ 
+  user = {
+    subscription: {
+      tier: 'pro',
+      startDate: new Date('2024-01-01'),
+      nextBillingDate: new Date('2024-02-01'),
+      status: 'active',
+    },
+    usage: {
+      uploadUsed: 450, // MB
+      tokensUsed: 65000,
+      lastUpdated: new Date(),
+    },
+  },
+  onUpgrade = () => {},
+  onDowngrade = () => {},
+  onManageBilling = () => {},
+  onDownloadInvoice = () => {},
+  className,
+}) => {
+  const [currentUsage, setCurrentUsage] = useState(user.usage);
+  const currentPlan = subscriptionPlans[user.subscription.tier];
+
+  // Calculate usage percentages
+  const uploadPercentage = Math.min((currentUsage.uploadUsed / currentPlan.uploadLimit) * 100, 100);
+  const tokenPercentage = Math.min((currentUsage.tokensUsed / currentPlan.tokenLimit) * 100, 100);
+
+  // Determine usage severity
+  const getUsageSeverity = (percentage) => {
+    if (percentage >= 90) return 'high';
+    if (percentage >= 70) return 'medium';
+    return 'low';
+  };
+
+  // Mock billing history
+  const billingHistory = [
+    {
+      id: 1,
+      date: new Date('2024-01-01'),
+      amount: currentPlan.price,
+      status: 'paid',
+      invoiceId: 'INV-2024-001',
+    },
+    {
+      id: 2,
+      date: new Date('2023-12-01'),
+      amount: currentPlan.price,
+      status: 'paid',
+      invoiceId: 'INV-2023-012',
+    },
+    {
+      id: 3,
+      date: new Date('2023-11-01'),
+      amount: currentPlan.price,
+      status: 'paid',
+      invoiceId: 'INV-2023-011',
+    },
+  ];
+
+  // Mock usage recommendations
+  const getUsageRecommendations = () => {
+    const recommendations = [];
     
-    if (token) {
-      fetchSubscriptionData(token);
-    } else {
-      setError('Please log in to view subscription details');
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchSubscriptionData = async (token) => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/v1/subscription/my-subscription', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+    if (uploadPercentage > 80) {
+      recommendations.push({
+        type: 'warning',
+        title: 'Upload Quota Nearly Exceeded',
+        message: `You've used ${uploadPercentage.toFixed(1)}% of your upload quota. Consider upgrading or managing your storage.`,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setSubscriptionData(data);
-    } catch (err) {
-      console.error('Error fetching subscription data:', err);
-      setError('Failed to load subscription data');
-    } finally {
-      setLoading(false);
     }
+    
+    if (tokenPercentage > 80) {
+      recommendations.push({
+        type: 'warning',
+        title: 'Token Usage High',
+        message: `You've used ${tokenPercentage.toFixed(1)}% of your token quota. Consider upgrading for unlimited processing.`,
+      });
+    }
+    
+    if (user.subscription.tier === 'free' && (uploadPercentage > 50 || tokenPercentage > 50)) {
+      recommendations.push({
+        type: 'info',
+        title: 'Upgrade Recommendation',
+        message: 'Consider upgrading to Pro for 10x more storage and tokens plus priority processing.',
+      });
+    }
+    
+    return recommendations;
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const getUsagePercentage = (current, limit) => {
-    if (limit === 0) return 0;
-    return Math.min((current / limit) * 100, 100);
-  };
-
-  const getUsageColor = (percentage) => {
-    if (percentage >= 90) return '#e74c3c';
-    if (percentage >= 75) return '#f39c12';
-    return '#27ae60';
-  };
-
-  const QuotaCard = ({ title, current, limit, unit, type }) => {
-    const percentage = getUsagePercentage(current, limit);
-    const color = getUsageColor(percentage);
-
-    return (
-      <div className="quota-card">
-        <div className="quota-header">
-          <h3>{title}</h3>
-          <span className="quota-percentage" style={{ color }}>
-            {percentage.toFixed(1)}%
-          </span>
-        </div>
-        <div className="quota-progress">
-          <div 
-            className="quota-progress-bar" 
-            style={{ 
-              width: `${percentage}%`,
-              backgroundColor: color 
-            }}
-          />
-        </div>
-        <div className="quota-details">
-          <span className="quota-current">
-            {current.toLocaleString()} {unit}
-          </span>
-          <span className="quota-limit">
-            / {limit.toLocaleString()} {unit}
-          </span>
-        </div>
-        <div className="quota-remaining">
-          {(limit - current).toLocaleString()} {unit} remaining
-        </div>
-      </div>
-    );
-  };
-
-  const UsageTrendChart = ({ trendData }) => {
-    if (!trendData || trendData.length === 0) return null;
-
-    const maxValue = Math.max(...trendData.map(d => 
-      Math.max(d.usage.upload || 0, d.usage.token || 0, d.usage.search || 0)
-    ));
-
-    return (
-      <div className="usage-trend">
-        <h3>Usage Trend (Last 6 Months)</h3>
-        <div className="trend-chart">
-          {trendData.map((month, index) => (
-            <div key={index} className="trend-month">
-              <div className="trend-bars">
-                <div 
-                  className="trend-bar upload"
-                  style={{ height: `${(month.usage.upload / maxValue) * 100}%` }}
-                  title={`Upload: ${month.usage.upload}`}
-                />
-                <div 
-                  className="trend-bar token"
-                  style={{ height: `${(month.usage.token / maxValue) * 100}%` }}
-                  title={`Tokens: ${month.usage.token}`}
-                />
-                <div 
-                  className="trend-bar search"
-                  style={{ height: `${(month.usage.search / maxValue) * 100}%` }}
-                  title={`Searches: ${month.usage.search}`}
-                />
-              </div>
-              <div className="trend-label">{month.month}</div>
-            </div>
-          ))}
-        </div>
-        <div className="trend-legend">
-          <div className="legend-item">
-            <span className="legend-color upload"></span>
-            Upload (MB)
-          </div>
-          <div className="legend-item">
-            <span className="legend-color token"></span>
-            Tokens
-          </div>
-          <div className="legend-item">
-            <span className="legend-color search"></span>
-            Searches
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="subscription-dashboard">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading subscription data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="subscription-dashboard">
-        <div className="error-message">
-          <h2>Error</h2>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()}>
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!subscriptionData) {
-    return (
-      <div className="subscription-dashboard">
-        <div className="no-data">
-          <h2>No Subscription Data</h2>
-          <p>Unable to load subscription information.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const { subscription, quota_status, usage_analytics } = subscriptionData;
+  const recommendations = getUsageRecommendations();
 
   return (
-    <div className="subscription-dashboard">
-      <div className="dashboard-header">
-        <h1>Subscription Dashboard</h1>
-        <div className="subscription-badge">
-          <span className={`tier-badge ${subscription.tier.name}`}>
-            {subscription.tier.display_name}
-          </span>
-          <span className={`status-badge ${subscription.status}`}>
-            {subscription.status}
-          </span>
-        </div>
-      </div>
+    <Box className={className}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: '#202124' }}>
+          📋 Subscription Dashboard
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Manage your subscription, monitor usage, and track billing information.
+        </Typography>
+      </Box>
 
-      {/* Current Subscription Info */}
-      <div className="subscription-info">
-        <div className="info-card">
-          <h2>Current Plan</h2>
-          <div className="plan-details">
-            <div className="plan-name">{subscription.tier.display_name}</div>
-            <div className="plan-price">
-              {formatCurrency(subscription.tier.price_monthly)}/month
-            </div>
-            <div className="plan-cycle">
-              Billing: {subscription.billing_cycle}
-            </div>
-            <div className="plan-dates">
-              <div>Started: {formatDate(subscription.start_date)}</div>
-              {subscription.end_date && (
-                <div>Ends: {formatDate(subscription.end_date)}</div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="info-card">
-          <h2>Account Summary</h2>
-          <div className="account-stats">
-            <div className="stat">
-              <span className="stat-label">Documents</span>
-              <span className="stat-value">{usage_analytics.document_count}</span>
-            </div>
-            <div className="stat">
-              <span className="stat-label">This Month</span>
-              <span className="stat-value">{usage_analytics.current_month}</span>
-            </div>
-            {subscription.next_billing_date && (
-              <div className="stat">
-                <span className="stat-label">Next Billing</span>
-                <span className="stat-value">{formatDate(subscription.next_billing_date)}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Quota Status */}
-      <div className="quota-section">
-        <h2>Usage & Quotas</h2>
-        <div className="quota-grid">
-          <QuotaCard
-            title="File Uploads"
-            current={quota_status.upload.current_usage}
-            limit={quota_status.upload.limit}
-            unit="MB"
-            type="upload"
-          />
-          <QuotaCard
-            title="AI Tokens"
-            current={quota_status.token.current_usage}
-            limit={quota_status.token.limit}
-            unit="tokens"
-            type="token"
-          />
-          <QuotaCard
-            title="Searches"
-            current={quota_status.search.current_usage}
-            limit={quota_status.search.limit}
-            unit="searches"
-            type="search"
-          />
-        </div>
-        <div className="quota-reset">
-          <p>Quotas reset on: {formatDate(quota_status.upload.reset_date)}</p>
-        </div>
-      </div>
-
-      {/* Usage Trend */}
-      {usage_analytics.usage_trend && (
-        <UsageTrendChart trendData={usage_analytics.usage_trend} />
+      {/* Recommendations */}
+      {recommendations.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          {recommendations.map((rec, index) => (
+            <Alert 
+              key={index} 
+              severity={rec.type === 'warning' ? 'warning' : 'info'} 
+              sx={{ mb: 1 }}
+            >
+              <AlertTitle>{rec.title}</AlertTitle>
+              {rec.message}
+            </Alert>
+          ))}
+        </Box>
       )}
 
-      {/* Plan Features */}
-      <div className="features-section">
-        <h2>Plan Features</h2>
-        <div className="features-grid">
-          {subscription.tier.features && subscription.tier.features.map((feature, index) => (
-            <div key={index} className="feature-item">
-              <span className="feature-check">✓</span>
-              {feature}
-            </div>
-          ))}
-        </div>
-      </div>
+      <Grid container spacing={3}>
+        {/* Current Plan */}
+        <Grid item xs={12} md={4}>
+          <StyledCard variant="primary">
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Avatar sx={{ 
+                  width: 48, 
+                  height: 48, 
+                  bgcolor: currentPlan.color, 
+                  mr: 2,
+                  fontSize: '20px'
+                }}>
+                  <PlanIcon />
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Current Plan
+                  </Typography>
+                  <PlanBadge 
+                    label={currentPlan.name} 
+                    tier={user.subscription.tier}
+                  />
+                </Box>
+              </Box>
 
-      {/* Action Buttons */}
-      <div className="dashboard-actions">
-        <button className="btn btn-primary" onClick={() => window.location.href = '/subscription/plans'}>
-          Upgrade Plan
-        </button>
-        <button className="btn btn-secondary" onClick={() => window.location.href = '/subscription/billing'}>
-          Billing History
-        </button>
-        <button className="btn btn-secondary" onClick={() => window.location.href = '/subscription/usage'}>
-          Detailed Usage
-        </button>
-      </div>
-    </div>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: currentPlan.color }}>
+                  ${currentPlan.price}
+                  <Typography component="span" variant="body2" color="text.secondary">
+                    /month
+                  </Typography>
+                </Typography>
+              </Box>
+
+              <List dense>
+                {currentPlan.features.map((feature, index) => (
+                  <ListItem key={index} sx={{ px: 0 }}>
+                    <ListItemIcon sx={{ minWidth: 24 }}>
+                      <CheckIcon />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={feature} 
+                      primaryTypographyProps={{ fontSize: '0.875em' }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+
+              <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                {user.subscription.tier !== 'enterprise' && (
+                  <Button 
+                    variant="contained" 
+                    size="small" 
+                    onClick={onUpgrade}
+                    startIcon={<UpgradeIcon />}
+                  >
+                    Upgrade
+                  </Button>
+                )}
+                <Button 
+                  variant="outlined" 
+                  size="small" 
+                  onClick={onManageBilling}
+                >
+                  Manage
+                </Button>
+              </Box>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+
+        {/* Usage Statistics */}
+        <Grid item xs={12} md={8}>
+          <StyledCard>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Avatar sx={{ width: 40, height: 40, bgcolor: '#4285f4', mr: 2 }}>
+                  <UsageIcon />
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Usage Statistics
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Last updated: {currentUsage.lastUpdated.toLocaleString()}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Grid container spacing={3}>
+                {/* Upload Usage */}
+                <Grid item xs={12} sm={6}>
+                  <Paper sx={{ p: 2, border: '1px solid #dadce0' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <StorageIcon />
+                      <Typography variant="subtitle2" sx={{ ml: 1, fontWeight: 600 }}>
+                        Upload Storage
+                      </Typography>
+                    </Box>
+                    
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+                      {currentUsage.uploadUsed} MB
+                      <Typography component="span" variant="body2" color="text.secondary">
+                        / {currentPlan.uploadLimit} MB
+                      </Typography>
+                    </Typography>
+                    
+                    <UsageProgressBar
+                      variant="determinate"
+                      value={uploadPercentage}
+                      severity={getUsageSeverity(uploadPercentage)}
+                      sx={{ mb: 1 }}
+                    />
+                    
+                    <Typography variant="caption" color="text.secondary">
+                      {uploadPercentage.toFixed(1)}% used
+                    </Typography>
+                  </Paper>
+                </Grid>
+
+                {/* Token Usage */}
+                <Grid item xs={12} sm={6}>
+                  <Paper sx={{ p: 2, border: '1px solid #dadce0' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <TokenIcon />
+                      <Typography variant="subtitle2" sx={{ ml: 1, fontWeight: 600 }}>
+                        AI Tokens
+                      </Typography>
+                    </Box>
+                    
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+                      {currentUsage.tokensUsed.toLocaleString()}
+                      <Typography component="span" variant="body2" color="text.secondary">
+                        / {currentPlan.tokenLimit.toLocaleString()}
+                      </Typography>
+                    </Typography>
+                    
+                    <UsageProgressBar
+                      variant="determinate"
+                      value={tokenPercentage}
+                      severity={getUsageSeverity(tokenPercentage)}
+                      sx={{ mb: 1 }}
+                    />
+                    
+                    <Typography variant="caption" color="text.secondary">
+                      {tokenPercentage.toFixed(1)}% used
+                    </Typography>
+                  </Paper>
+                </Grid>
+              </Grid>
+
+              {/* Quota Reset Info */}
+              <Box sx={{ mt: 2, p: 2, bgcolor: alpha('#4285f4', 0.05), borderRadius: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CalendarIcon />
+                  <Typography variant="body2" sx={{ ml: 1 }}>
+                    <strong>Next billing cycle:</strong> {user.subscription.nextBillingDate.toLocaleDateString()}
+                    <br />
+                    Quotas will reset on your next billing date.
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+
+        {/* Billing Information */}
+        <Grid item xs={12}>
+          <StyledCard>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ width: 40, height: 40, bgcolor: '#34a853', mr: 2 }}>
+                    <BillingIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Billing History
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Recent transactions and invoices
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Button 
+                  variant="outlined" 
+                  size="small"
+                  onClick={onManageBilling}
+                >
+                  Manage Billing
+                </Button>
+              </Box>
+
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Date</TableCell>
+                      <TableCell>Amount</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Invoice</TableCell>
+                      <TableCell align="right">Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {billingHistory.map((bill) => (
+                      <TableRow key={bill.id} hover>
+                        <TableCell>
+                          {bill.date.toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            ${bill.amount}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={bill.status} 
+                            size="small"
+                            color={bill.status === 'paid' ? 'success' : 'default'}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                            {bill.invoiceId}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Tooltip title="Download Invoice">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => onDownloadInvoice(bill.invoiceId)}
+                            >
+                              <DownloadIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              {/* Subscription Details */}
+              <Divider sx={{ my: 3 }} />
+              
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+                  Subscription Details
+                </Typography>
+                
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Typography variant="caption" color="text.secondary">
+                      Plan
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {currentPlan.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Typography variant="caption" color="text.secondary">
+                      Status
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {user.subscription.status}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Typography variant="caption" color="text.secondary">
+                      Start Date
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {user.subscription.startDate.toLocaleDateString()}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Typography variant="caption" color="text.secondary">
+                      Next Billing
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {user.subscription.nextBillingDate.toLocaleDateString()}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+            </CardContent>
+          </StyledCard>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

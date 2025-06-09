@@ -29,7 +29,7 @@ const links = [
     text: "Build and Host",
     url: "https://www.gatsbyjs.com/cloud",
     description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
+      "Now you're ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
   },
 ]
 
@@ -68,6 +68,20 @@ const samplePageLinks = [
     badge: true,
     description:
       "NEW! Interactive chat with markdown rendering, emoji picker, and responsive design",
+  },
+  {
+    text: "💳 Subscription Management",
+    url: "subscription-demo",
+    badge: true,
+    description:
+      "NEW! Complete subscription system with dashboard, plans, usage indicators, and billing",
+  },
+  {
+    text: "📊 Usage Integration System",
+    url: "usage-integration-demo",
+    badge: true,
+    description:
+      "NEW! Global usage indicators, contextual guards, and real-time quota monitoring",
   },
   {
     text: "🔍 Semantic Search",

@@ -1,6 +1,107 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Alert,
+  AlertTitle,
+  Chip,
+  Divider,
+  FormControlLabel,
+  Switch,
+  TextField,
+  RadioGroup,
+  Radio,
+  FormControl,
+  FormLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  LinearProgress,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
+import { styled, alpha } from '@mui/material/styles';
 import './SubscriptionUpgradeFlow.css';
 import UsageIndicator from './UsageIndicator';
+
+// Icons using Unicode emojis
+const CheckIcon = () => <span style={{ fontSize: '16px', color: '#34a853' }}>✅</span>;
+const WarningIcon = () => <span style={{ fontSize: '16px', color: '#ea4335' }}>⚠️</span>;
+const InfoIcon = () => <span style={{ fontSize: '16px', color: '#4285f4' }}>ℹ️</span>;
+const ExpandIcon = () => <span style={{ fontSize: '16px' }}>📊</span>;
+const CalendarIcon = () => <span style={{ fontSize: '16px' }}>📅</span>;
+const CreditCardIcon = () => <span style={{ fontSize: '16px' }}>💳</span>;
+const ReceiptIcon = () => <span style={{ fontSize: '16px' }}>🧾</span>;
+const LockIcon = () => <span style={{ fontSize: '16px' }}>🔒</span>;
+
+// Styled components
+const PlanComparisonCard = styled(Card)(({ theme, selected, isUpgrade }) => ({
+  border: selected 
+    ? `2px solid ${isUpgrade ? '#34a853' : '#ea4335'}` 
+    : '1px solid #dadce0',
+  transition: 'all 0.2s ease-in-out',
+  cursor: 'pointer',
+  ...(selected && {
+    backgroundColor: alpha(isUpgrade ? '#34a853' : '#ea4335', 0.02),
+  }),
+  '&:hover': {
+    borderColor: isUpgrade ? '#34a853' : '#ea4335',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  },
+}));
+
+const StepContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: '#fff',
+  borderRadius: theme.spacing(1),
+  border: '1px solid #dadce0',
+}));
+
+// Plans configuration
+const plans = {
+  free: {
+    name: 'Free',
+    price: 0,
+    features: ['100MB storage', '10K tokens/month', 'Community support'],
+    limits: { storage: 100, tokens: 10000 },
+    color: '#5f6368',
+  },
+  pro: {
+    name: 'Pro',
+    price: 29,
+    features: ['1GB storage', '100K tokens/month', 'Priority processing', 'Email support'],
+    limits: { storage: 1000, tokens: 100000 },
+    color: '#4285f4',
+  },
+  enterprise: {
+    name: 'Enterprise',
+    price: 99,
+    features: ['10GB+ storage', '1M+ tokens/month', 'Custom quotas', 'Dedicated support', 'API access'],
+    limits: { storage: 10000, tokens: 1000000 },
+    color: '#34a853',
+  },
+};
 
 const SubscriptionUpgradeFlow = ({ onClose, initialPlan = null }) => {
   const [currentStep, setCurrentStep] = useState(1);
