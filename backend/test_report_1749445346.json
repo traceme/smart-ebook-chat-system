@@ -1,0 +1,75 @@
+{
+  "test_summary": {
+    "total_tests": 6,
+    "passed": 3,
+    "failed": 3,
+    "success_rate": "50.0%",
+    "total_execution_time": "1.16s",
+    "average_test_time": "0.19s"
+  },
+  "test_results": [
+    {
+      "test_name": "Service Health Checks",
+      "status": "PASS",
+      "execution_time": 0.10718178749084473,
+      "details": {
+        "/health": "healthy",
+        "/api/v1/vector/health": "healthy"
+      },
+      "recommendations": []
+    },
+    {
+      "test_name": "User Registration and Login",
+      "status": "PASS",
+      "execution_time": 0.5948219299316406,
+      "details": {
+        "token_type": "bearer",
+        "user_authenticated": true
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Upload Pipeline",
+      "status": "FAIL",
+      "execution_time": 0.017715930938720703,
+      "details": {
+        "error": "File upload to storage failed: 400 - <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>InvalidRequest</Code><Message>Invalid Request (request has multiple authentication types, please use one)</Message><Resource>/ebooks/documents/17/48964a/d9e444ec-ba13-4ba7-9292-18bd6517ba3d/test_upload_1749445346.md</Resource><RequestId></RequestId><HostId></HostId></Error>"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Conversion Workflow",
+      "status": "FAIL",
+      "execution_time": 0.014410018920898438,
+      "details": {
+        "error": "Upload pipeline failed, cannot test conversion"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Vector Indexing and Search",
+      "status": "FAIL",
+      "execution_time": 0.014526844024658203,
+      "details": {
+        "error": "Document conversion failed, cannot test vector indexing"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Performance Load Simulation",
+      "status": "PASS",
+      "execution_time": 0.41181206703186035,
+      "details": {
+        "concurrent_requests": 5,
+        "avg_search_time": "0.082s",
+        "max_search_time": "0.100s",
+        "min_search_time": "0.072s",
+        "throughput": "12.14 req/s"
+      },
+      "recommendations": []
+    }
+  ],
+  "optimization_recommendations": [],
+  "system_health": "NEEDS_ATTENTION",
+  "generated_at": "2025-06-09T13:02:26.650381"
+}

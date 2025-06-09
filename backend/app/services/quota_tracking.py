@@ -1,4 +1,4 @@
- """
+"""
 Quota Tracking Service
 
 This service handles quota tracking, enforcement, and management for the subscription system.

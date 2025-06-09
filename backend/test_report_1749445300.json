@@ -1,0 +1,75 @@
+{
+  "test_summary": {
+    "total_tests": 6,
+    "passed": 3,
+    "failed": 3,
+    "success_rate": "50.0%",
+    "total_execution_time": "4.69s",
+    "average_test_time": "0.78s"
+  },
+  "test_results": [
+    {
+      "test_name": "Service Health Checks",
+      "status": "PASS",
+      "execution_time": 2.128122091293335,
+      "details": {
+        "/health": "healthy",
+        "/api/v1/vector/health": "healthy"
+      },
+      "recommendations": []
+    },
+    {
+      "test_name": "User Registration and Login",
+      "status": "PASS",
+      "execution_time": 0.57871413230896,
+      "details": {
+        "token_type": "bearer",
+        "user_authenticated": true
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Upload Pipeline",
+      "status": "FAIL",
+      "execution_time": 1.5442619323730469,
+      "details": {
+        "error": "HTTPConnectionPool(host='minio', port=9000): Max retries exceeded with url: /ebooks/documents/4f/a8aece/0e6ecde3-33cb-43f6-8d26-0b9f642a295f/test_upload_1749445299.md?AWSAccessKeyId=minioadmin&Signature=aGQ92mZWloCu1erMTcGm%2F9hsT9I%3D&content-type=application%2Foctet-stream&Expires=1749448899 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1045850a0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Conversion Workflow",
+      "status": "FAIL",
+      "execution_time": 0.018423795700073242,
+      "details": {
+        "error": "Upload pipeline failed, cannot test conversion"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Vector Indexing and Search",
+      "status": "FAIL",
+      "execution_time": 0.014737844467163086,
+      "details": {
+        "error": "Document conversion failed, cannot test vector indexing"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Performance Load Simulation",
+      "status": "PASS",
+      "execution_time": 0.4021477699279785,
+      "details": {
+        "concurrent_requests": 5,
+        "avg_search_time": "0.080s",
+        "max_search_time": "0.090s",
+        "min_search_time": "0.071s",
+        "throughput": "12.43 req/s"
+      },
+      "recommendations": []
+    }
+  ],
+  "optimization_recommendations": [],
+  "system_health": "NEEDS_ATTENTION",
+  "generated_at": "2025-06-09T13:01:40.997911"
+}

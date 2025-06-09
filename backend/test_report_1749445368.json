@@ -1,0 +1,75 @@
+{
+  "test_summary": {
+    "total_tests": 6,
+    "passed": 3,
+    "failed": 3,
+    "success_rate": "50.0%",
+    "total_execution_time": "2.31s",
+    "average_test_time": "0.39s"
+  },
+  "test_results": [
+    {
+      "test_name": "Service Health Checks",
+      "status": "PASS",
+      "execution_time": 1.3224711418151855,
+      "details": {
+        "/health": "healthy",
+        "/api/v1/vector/health": "healthy"
+      },
+      "recommendations": []
+    },
+    {
+      "test_name": "User Registration and Login",
+      "status": "PASS",
+      "execution_time": 0.5614199638366699,
+      "details": {
+        "token_type": "bearer",
+        "user_authenticated": true
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Upload Pipeline",
+      "status": "FAIL",
+      "execution_time": 0.017480134963989258,
+      "details": {
+        "error": "File upload to storage failed: 403 - <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>SignatureDoesNotMatch</Code><Message>The request signature we calculated does not match the signature you provided. Check your key and signing method.</Message><Key>documents/1d/604506/4f4646a4-9bdd-498d-99ef-0714cff5f7c6/test_upload_1749445368.md</Key><BucketName>ebooks</BucketName><Resource>/ebooks/documents/1d/604506/4f4646a4-9bdd-498d-99ef-0714cff5f7c6/test_upload_1749445368.md</Resource><RequestId>1847474B203553BF</RequestId><HostId>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</HostId></Error>"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Conversion Workflow",
+      "status": "FAIL",
+      "execution_time": 0.017613649368286133,
+      "details": {
+        "error": "Upload pipeline failed, cannot test conversion"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Vector Indexing and Search",
+      "status": "FAIL",
+      "execution_time": 0.01623392105102539,
+      "details": {
+        "error": "Document conversion failed, cannot test vector indexing"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Performance Load Simulation",
+      "status": "PASS",
+      "execution_time": 0.3763771057128906,
+      "details": {
+        "concurrent_requests": 5,
+        "avg_search_time": "0.075s",
+        "max_search_time": "0.088s",
+        "min_search_time": "0.069s",
+        "throughput": "13.29 req/s"
+      },
+      "recommendations": []
+    }
+  ],
+  "optimization_recommendations": [],
+  "system_health": "NEEDS_ATTENTION",
+  "generated_at": "2025-06-09T13:02:48.661054"
+}

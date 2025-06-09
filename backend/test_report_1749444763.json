@@ -1,0 +1,76 @@
+{
+  "test_summary": {
+    "total_tests": 6,
+    "passed": 0,
+    "failed": 6,
+    "success_rate": "0.0%",
+    "total_execution_time": "0.03s",
+    "average_test_time": "0.00s"
+  },
+  "test_results": [
+    {
+      "test_name": "Service Health Checks",
+      "status": "FAIL",
+      "execution_time": 0.014319896697998047,
+      "details": {
+        "/health": "ERROR_404",
+        "/vector-search/health": "ERROR_404"
+      },
+      "recommendations": [
+        "Some services are unhealthy - check service logs",
+        "Verify all Docker containers are running"
+      ]
+    },
+    {
+      "test_name": "User Registration and Login",
+      "status": "FAIL",
+      "execution_time": 0.002808094024658203,
+      "details": {
+        "error": "Registration failed: {\"detail\":\"Not Found\"}"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Upload Pipeline",
+      "status": "FAIL",
+      "execution_time": 0.0027780532836914062,
+      "details": {
+        "error": "Upload initialization failed: {\"detail\":\"Not Found\"}"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Document Conversion Workflow",
+      "status": "FAIL",
+      "execution_time": 0.002918720245361328,
+      "details": {
+        "error": "Upload pipeline failed, cannot test conversion"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Vector Indexing and Search",
+      "status": "FAIL",
+      "execution_time": 0.002850770950317383,
+      "details": {
+        "error": "Document conversion failed, cannot test vector indexing"
+      },
+      "recommendations": null
+    },
+    {
+      "test_name": "Performance Load Simulation",
+      "status": "FAIL",
+      "execution_time": 0.0020160675048828125,
+      "details": {
+        "error": "Search 0 failed: {\"detail\":\"Not Found\"}"
+      },
+      "recommendations": null
+    }
+  ],
+  "optimization_recommendations": [
+    "Some services are unhealthy - check service logs",
+    "Verify all Docker containers are running"
+  ],
+  "system_health": "NEEDS_ATTENTION",
+  "generated_at": "2025-06-09T12:52:43.504686"
+}

@@ -1,4 +1,4 @@
- """
+"""
 Subscription Management API Router
 
 This module provides API endpoints for subscription management including
@@ -13,8 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, func
 
-from app.core.auth import get_current_user
-from app.db.session import get_db
+from app.api import deps
 from app.models.user import User
 from app.models.subscription import (
     SubscriptionTier as SubscriptionTierModel,
@@ -59,7 +58,7 @@ router = APIRouter(prefix="/api/v1/subscription", tags=["subscription"])
 @router.get("/tiers", response_model=TierListResponse)
 async def get_subscription_tiers(
     active_only: bool = Query(True, description="Return only active tiers"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(deps.get_db)
 ):
     """Get all subscription tiers."""
     query = db.query(SubscriptionTierModel)
@@ -78,7 +77,7 @@ async def get_subscription_tiers(
 @router.get("/tiers/{tier_id}", response_model=SubscriptionTier)
 async def get_subscription_tier(
     tier_id: UUID,
-    db: Session = Depends(get_db)
+    db: Session = Depends(deps.get_db)
 ):
     """Get a specific subscription tier."""
     tier = db.query(SubscriptionTierModel).filter(
@@ -97,8 +96,8 @@ async def get_subscription_tier(
 @router.post("/tiers", response_model=SubscriptionTier)
 async def create_subscription_tier(
     tier_data: SubscriptionTierCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Create a new subscription tier (admin only)."""
     if not current_user.is_superuser:
@@ -132,8 +131,8 @@ async def create_subscription_tier(
 async def update_subscription_tier(
     tier_id: UUID,
     tier_data: SubscriptionTierUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Update a subscription tier (admin only)."""
     if not current_user.is_superuser:
@@ -169,8 +168,8 @@ async def update_subscription_tier(
 # User Subscription Management
 @router.get("/my-subscription", response_model=SubscriptionResponse)
 async def get_my_subscription(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get current user's subscription details."""
     quota_service = QuotaTrackingService(db)
@@ -223,8 +222,8 @@ async def get_my_subscription(
 @router.post("/subscribe", response_model=UserSubscription)
 async def subscribe_to_tier(
     subscription_data: SubscriptionChangeRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Subscribe to a new tier or change existing subscription."""
     quota_service = QuotaTrackingService(db)
@@ -285,8 +284,8 @@ async def subscribe_to_tier(
 @router.post("/cancel")
 async def cancel_subscription(
     cancel_data: SubscriptionCancelRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Cancel current subscription."""
     quota_service = QuotaTrackingService(db)
@@ -335,8 +334,8 @@ async def cancel_subscription(
 # Quota and Usage Management
 @router.get("/quota", response_model=QuotaStatusResponse)
 async def get_quota_status(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get current quota status for the user."""
     quota_service = QuotaTrackingService(db)
@@ -353,8 +352,8 @@ async def get_quota_status(
 async def get_usage_history(
     days: int = Query(30, description="Number of days to retrieve", ge=1, le=365),
     usage_type: Optional[UsageTypeEnum] = Query(None, description="Filter by usage type"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get usage history for the current user."""
     quota_service = QuotaTrackingService(db)
@@ -371,8 +370,8 @@ async def get_usage_history(
 
 @router.get("/analytics", response_model=UsageAnalytics)
 async def get_usage_analytics(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get detailed usage analytics for the current user."""
     quota_service = QuotaTrackingService(db)
@@ -388,8 +387,8 @@ async def get_all_subscriptions(
     size: int = Query(50, description="Page size", ge=1, le=100),
     status: Optional[SubscriptionStatusEnum] = Query(None, description="Filter by status"),
     tier_id: Optional[UUID] = Query(None, description="Filter by tier"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get all subscriptions (admin only)."""
     if not current_user.is_superuser:
@@ -425,8 +424,8 @@ async def get_all_subscriptions(
 async def get_usage_statistics(
     start_date: Optional[date] = Query(None, description="Start date for statistics"),
     end_date: Optional[date] = Query(None, description="End date for statistics"),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Get usage statistics across all users (admin only)."""
     if not current_user.is_superuser:
@@ -494,8 +493,8 @@ async def get_usage_statistics(
 async def check_quota_limit(
     usage_type: UsageTypeEnum,
     amount: int = Query(1, description="Amount to check", ge=1),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Check if user can perform an operation without exceeding quota."""
     quota_service = QuotaTrackingService(db)
@@ -519,8 +518,8 @@ async def check_quota_limit(
 @router.post("/record-usage")
 async def record_usage(
     usage_data: UsageRecord,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user)
 ):
     """Record usage for the current user (internal use)."""
     quota_service = QuotaTrackingService(db)

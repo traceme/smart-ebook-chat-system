@@ -20,4 +20,4 @@ class User(Base):
     
     # Relationships
     documents = relationship("Document", back_populates="user")
-    subscription = relationship("UserSubscription", back_populates="user", uselist=False) 
+    subscriptions = relationship("UserSubscription", back_populates="user") 

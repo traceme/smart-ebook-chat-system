@@ -1,0 +1,101 @@
+{
+  "total_tests": 10,
+  "passed_tests": 8,
+  "failed_tests": 2,
+  "success_rate": 80.0,
+  "test_results": [
+    {
+      "test": "Authentication",
+      "success": true,
+      "details": {
+        "token_type": "bearer"
+      }
+    },
+    {
+      "test": "Chat Health Check",
+      "success": true,
+      "details": {
+        "status": "healthy",
+        "service": "Chat Interface",
+        "features": 4
+      }
+    },
+    {
+      "test": "Simple Chat Message",
+      "success": true,
+      "details": {
+        "conversation_id": "d5408eca...",
+        "response_time": "1.225s",
+        "message_length": 145,
+        "sources_count": 0
+      }
+    },
+    {
+      "test": "Conversation History",
+      "success": true,
+      "details": {
+        "conversation_id": "d5408eca-f367-4549-9b41-0a0fa9cc3582",
+        "title": "Hello! What can you help me",
+        "message_count": 2,
+        "user_messages": 1,
+        "assistant_messages": 1
+      }
+    },
+    {
+      "test": "Conversation List",
+      "success": true,
+      "details": {
+        "total_conversations": 2,
+        "conversation_titles": [
+          "Hello! What can you help me...",
+          "What is this system about?..."
+        ]
+      }
+    },
+    {
+      "test": "Continue Conversation",
+      "success": true,
+      "details": {
+        "same_conversation": true,
+        "response_time": "0.809s",
+        "message_preview": "I couldn't find relevant information in your documents to answer this question. Please make sure you...",
+        "sources_count": 0
+      }
+    },
+    {
+      "test": "Create Conversation",
+      "success": true,
+      "details": {
+        "conversation_id": "7a008f7f-310f-466b-b9ad-f4b99d0e20c3",
+        "title": "New Conversation",
+        "created_at": "2025-06-09T05:22:04.257506"
+      }
+    },
+    {
+      "test": "Update Conversation",
+      "success": false,
+      "details": {
+        "status_code": 422,
+        "error": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"title\"],\"msg\":\"Field required\",\"input\":null}]}"
+      }
+    },
+    {
+      "test": "Delete Conversation",
+      "success": true,
+      "details": {
+        "message": "Conversation deleted successfully",
+        "deleted_conversation_id": "7a008f7f-310f-466b-b9ad-f4b99d0e20c3"
+      }
+    },
+    {
+      "test": "Different Message Types",
+      "success": false,
+      "details": {
+        "total_messages": 5,
+        "successful_messages": 4,
+        "success_rate": "80.0%",
+        "avg_response_time": "1.669s"
+      }
+    }
+  ]
+}
