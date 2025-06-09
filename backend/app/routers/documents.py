@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -394,6 +394,158 @@ The system converts documents like PDFs, DOCX, EPUB files into searchable Markdo
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create test document: {str(e)}"
         )
+
+@router.post("/{document_id}/convert-enhanced")
+def trigger_enhanced_document_conversion(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_user),
+    document_id: uuid.UUID,
+    preprocessing_config: Optional[Dict[str, Any]] = None,
+):
+    """Trigger enhanced document conversion with preprocessing."""
+    document = crud.document.get_by_id(db, document_id, current_user.id)
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    if document.upload_status != "completed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Document upload must be completed before conversion"
+        )
+    
+    if document.content_extracted:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Document has already been converted"
+        )
+    
+    # Import enhanced conversion task
+    from app.workers.enhanced_document_conversion import enhanced_convert_document
+    
+    # Trigger enhanced Celery task
+    task = enhanced_convert_document.delay(
+        str(document_id), 
+        str(current_user.id),
+        preprocessing_config
+    )
+    
+    return {
+        "status": "success",
+        "message": "Enhanced document conversion started",
+        "task_id": task.id,
+        "document_id": document_id,
+        "preprocessing_enabled": preprocessing_config is not None
+    }
+
+@router.get("/{document_id}/format-detection")
+def detect_document_format(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_user),
+    document_id: uuid.UUID,
+):
+    """Perform enhanced format detection on uploaded document."""
+    document = crud.document.get_by_id(db, document_id, current_user.id)
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    if document.upload_status != "completed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Document upload must be completed before format detection"
+        )
+    
+    try:
+        # Download file content
+        file_content = storage_service.s3_client.get_object(
+            Bucket=storage_service.bucket_name,
+            Key=document.storage_path
+        )['Body'].read()
+        
+        # Perform format detection
+        from app.services.document_format_detection import format_detector
+        
+        detection_result = format_detector.detect_format(
+            file_content=file_content,
+            filename=document.original_filename,
+            declared_format=document.file_type
+        )
+        
+        return {
+            "document_id": document_id,
+            "detected_format": detection_result.detected_format,
+            "confidence_score": detection_result.confidence_score,
+            "is_valid": detection_result.is_valid,
+            "mime_type": detection_result.mime_type,
+            "file_size": detection_result.file_size,
+            "metadata": detection_result.additional_metadata,
+            "error_message": detection_result.error_message
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Format detection failed: {str(e)}"
+        )
+
+@router.post("/{document_id}/process-complete")
+def start_complete_document_processing(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_user),
+    document_id: uuid.UUID,
+    pipeline_config: Optional[Dict[str, Any]] = None,
+):
+    """Start complete document processing with status tracking."""
+    document = crud.document.get_by_id(db, document_id, current_user.id)
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    if document.upload_status != "completed":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Document upload must be completed before processing"
+        )
+    
+    # Start processing tracking
+    from app.services.processing_status_tracker import processing_status_tracker
+    
+    processing_id = processing_status_tracker.start_processing(
+        document_id=str(document_id),
+        user_id=str(current_user.id),
+        initial_metadata={
+            'pipeline_config': pipeline_config,
+            'filename': document.original_filename,
+            'file_type': document.file_type
+        }
+    )
+    
+    # Start pipeline processing
+    from app.workers.document_pipeline import process_document_complete
+    
+    task = process_document_complete.delay(
+        str(document_id), 
+        str(current_user.id),
+        pipeline_config
+    )
+    
+    return {
+        "status": "success",
+        "message": "Complete document processing started",
+        "processing_id": processing_id,
+        "task_id": task.id,
+        "document_id": document_id
+    }
 
 def _get_conversion_status_message(upload_status: str) -> str:
     """Get human-readable conversion status message."""
