@@ -35,6 +35,41 @@ const links = [
 
 const samplePageLinks = [
   {
+    text: "📧 Complete Gmail Layout",
+    url: "gmail-layout-complete",
+    badge: true,
+    description:
+      "🔥 COMPLETE! Full Gmail-style interface with navigation, document list, and preview area",
+  },
+  {
+    text: "📧 Gmail Navigation Demo",
+    url: "gmail-demo",
+    badge: false,
+    description:
+      "Gmail-inspired navigation with responsive search, collapsible sidebar, and user menu",
+  },
+  {
+    text: "📄 Document List + Virtual Scrolling",
+    url: "document-list-demo",
+    badge: true,
+    description:
+      "High-performance document list with virtual scrolling for 5000+ items, categories, and search",
+  },
+  {
+    text: "🔍 Search Autocomplete",
+    url: "search-autocomplete-demo",
+    badge: true,
+    description:
+      "Advanced search with autocomplete, filters, debouncing, and keyboard navigation",
+  },
+  {
+    text: "💬 Chat Panel with Markdown",
+    url: "chat-panel-demo",
+    badge: true,
+    description:
+      "NEW! Interactive chat with markdown rendering, emoji picker, and responsive design",
+  },
+  {
     text: "🔍 Semantic Search",
     url: "search",
     badge: true,

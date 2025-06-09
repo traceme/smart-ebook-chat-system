@@ -46,8 +46,76 @@
       "dependencies": [
         3
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Database Models for Subscription System",
+          "description": "Design and implement the database models required for the subscription management system, including subscription tiers, user subscriptions, and quota tracking.",
+          "dependencies": [],
+          "details": "Create the following models: SubscriptionTier (with properties for tier name, price, upload quota, token quota), UserSubscription (linking users to their subscription tier with start/end dates), and UsageTracking (to record upload and token usage per user). Include appropriate relationships between models and implement database migrations.",
+          "status": "done",
+          "testStrategy": "Write unit tests to verify model relationships and constraints. Create test fixtures for each subscription tier."
+        },
+        {
+          "id": 2,
+          "title": "Implement Quota Tracking and Enforcement Middleware",
+          "description": "Develop the backend logic to track usage of uploads and tokens, and create middleware to enforce quota limits based on subscription tier.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create services to record and update usage metrics when users upload files or consume tokens. Implement middleware that checks current usage against tier limits before allowing operations. Include logic for the three tiers (Free: 100MB/month upload, 10k tokens/month; Pro: 1GB/month upload, 100k tokens/month; Enterprise: Custom quotas). Add reset logic for monthly quotas.",
+          "status": "done",
+          "testStrategy": "Test quota enforcement with mock requests that would exceed limits. Verify usage tracking accuracy with integration tests."
+        },
+        {
+          "id": 3,
+          "title": "Develop Subscription Management API Endpoints",
+          "description": "Create RESTful API endpoints for managing subscriptions, including subscription creation, upgrades, downgrades, and retrieving usage statistics.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement endpoints for: subscribing to a plan, changing subscription tier, viewing current usage, retrieving subscription details, and canceling subscriptions. Include validation logic and appropriate error handling. For Enterprise tier, add endpoints to customize quota limits. Ensure proper authentication and authorization checks.",
+          "status": "done",
+          "testStrategy": "Create API tests for each endpoint covering successful operations and error cases. Test subscription lifecycle from creation through cancellation."
+        },
+        {
+          "id": 4,
+          "title": "Build Subscription Management UI Components",
+          "description": "Develop frontend components for displaying and managing user subscriptions, including current plan details and usage statistics.",
+          "dependencies": [
+            3
+          ],
+          "details": "Create a subscription dashboard component showing current plan, billing information, and usage metrics. Implement UI for viewing subscription details, payment history, and account limits. Design responsive layouts that work across device sizes. Use charts/graphs to visualize usage data clearly.",
+          "status": "in-progress",
+          "testStrategy": "Write component tests to verify rendering and user interactions. Test responsive behavior across different viewport sizes."
+        },
+        {
+          "id": 5,
+          "title": "Implement Subscription Upgrade/Downgrade Flow",
+          "description": "Create the user interface and backend logic for upgrading or downgrading subscription tiers, including confirmation workflows and pro-rating logic.",
+          "dependencies": [
+            3,
+            4
+          ],
+          "details": "Build a tier comparison page showing features and limits of each plan. Implement a step-by-step upgrade/downgrade wizard with confirmation steps. Add backend logic for handling subscription changes, including pro-rating calculations and effective date handling. For downgrades, implement warnings about potential data loss if usage exceeds new tier limits.",
+          "status": "pending",
+          "testStrategy": "Test the complete upgrade/downgrade flow with different scenarios. Verify pro-rating calculations and effective date handling."
+        },
+        {
+          "id": 6,
+          "title": "Integrate Usage Indicators Throughout Application",
+          "description": "Add quota indicators and usage warnings throughout the application to provide users with visibility into their current usage and limits.",
+          "dependencies": [
+            2,
+            4
+          ],
+          "details": "Create a global usage indicator component showing current usage percentages. Add contextual warnings when users approach quota limits (e.g., at 80% usage). Integrate quota indicators in the file upload interface and token consumption areas. Implement notification system for quota limit warnings. For Enterprise tier, add detailed usage analytics dashboard.",
+          "status": "pending",
+          "testStrategy": "Test indicator visibility at different usage levels. Verify warning thresholds trigger appropriately. Test user experience when quotas are nearly exhausted and when fully exhausted."
+        }
+      ]
     },
     {
       "id": 5,
@@ -276,7 +344,7 @@
         9,
         10
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -289,7 +357,7 @@
       "dependencies": [
         1
       ],
-      "status": "pending",
+      "status": "in-progress",
       "subtasks": []
     },
     {
