@@ -89,7 +89,6 @@ const UsageProvider = ({ children, initialTier = 'free' }) => {
   // Check if user can perform action (e.g., upload document, use tokens)
   const canPerformAction = useCallback((action, amount = 1) => {
     const limits = getCurrentLimits();
-    const percentages = getUsagePercentages();
     
     switch (action) {
       case 'upload_document':
@@ -131,7 +130,7 @@ const UsageProvider = ({ children, initialTier = 'free' }) => {
     }
     
     return { allowed: true };
-  }, [usage, getCurrentLimits, getUsagePercentages]);
+  }, [usage, getCurrentLimits]);
 
   // Update usage data
   const updateUsage = useCallback((newUsage) => {

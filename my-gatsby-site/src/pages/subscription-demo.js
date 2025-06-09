@@ -1,34 +1,44 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Container,
+  Box,
   Typography,
-  Button,
-  Paper,
   Grid,
+  Paper,
+  Button,
   Card,
   CardContent,
+  CardActions,
   Tabs,
   Tab,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Alert,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Switch,
   FormControlLabel,
-  Alert,
-  Chip,
+  Switch,
   AppBar,
   Toolbar,
-  Divider,
+  styled,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-
+import {
+  Check as CheckIcon,
+  Star as StarIcon,
+  TrendingUp as TrendingUpIcon,
+  Security as SecurityIcon,
+  Speed as SpeedIcon,
+  Support as SupportIcon,
+} from '@mui/icons-material';
+import Layout from '../components/layout';
 import SubscriptionDashboard from '../components/SubscriptionDashboard';
+import SubscriptionUpgradeFlow from '../components/SubscriptionUpgradeFlow';
 import SubscriptionPlans from '../components/SubscriptionPlans';
 import UsageIndicator from '../components/UsageIndicator';
-import SubscriptionUpgradeFlow from '../components/SubscriptionUpgradeFlow';
-import TierComparison from '../components/TierComparison';
 
 // Demo page styling
 const DemoSection = styled(Paper)(({ theme }) => ({
@@ -57,6 +67,8 @@ const TabPanel = ({ children, value, index, ...other }) => (
 );
 
 const SubscriptionDemo = () => {
+  const [tabValue, setTabValue] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [currentTier, setCurrentTier] = useState('pro');
   const [usageScenario, setUsageScenario] = useState('normal');
@@ -140,6 +152,10 @@ const SubscriptionDemo = () => {
 
   const handleContactSales = () => {
     alert('Contact sales form would open here');
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
   return (

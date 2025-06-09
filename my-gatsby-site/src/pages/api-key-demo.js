@@ -1,33 +1,53 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
+  Container,
   Box,
   Typography,
-  Container,
   Grid,
   Paper,
-  Button,
+  IconButton,
   Card,
   CardContent,
-  Alert,
-  Chip,
-  AppBar,
-  Toolbar,
-  Switch,
-  FormControlLabel,
-  Divider,
+  CardHeader,
+  CardActions,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
+  ListItemSecondaryAction,
+  Tooltip,
+  Snackbar,
+  Alert,
+  AppBar,
+  Toolbar,
+  FormControlLabel,
+  Switch,
+  Chip,
+  ListItemIcon,
   Avatar,
+  styled,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import {
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Security as SecurityIcon,
+  CheckCircle as CheckCircleIcon,
+  Warning as WarningIcon,
+  Error as ErrorIcon,
+  CloudUpload as CloudUploadIcon,
+  Speed as SpeedIcon,
+  Shield as ShieldIcon,
+  TrendingUp as TrendingUpIcon,
+  Assessment as AssessmentIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
+import Layout from '../components/layout';
 import ApiKeyManager from '../components/ApiKeyManager';
 import SecureKeyInput from '../components/SecureKeyInput';
 
 // Icons using Unicode emojis
 const KeyIcon = () => <span style={{ fontSize: '20px' }}>🔑</span>;
-const SecurityIcon = () => <span style={{ fontSize: '16px' }}>🔒</span>;
 const DemoIcon = () => <span style={{ fontSize: '16px' }}>🎭</span>;
 const ProviderIcon = () => <span style={{ fontSize: '16px' }}>🏢</span>;
 const ValidIcon = () => <span style={{ fontSize: '16px' }}>✅</span>;
@@ -84,7 +104,7 @@ const sampleApiKeys = [
     id: '2',
     name: 'Claude Development Key',
     provider: 'anthropic',
-    key: 'sk-ant-api03-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef123456',
+    key: 'sk-ant-api03-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef123456',
     endpoint: null,
     createdAt: new Date('2024-01-20'),
     lastUsed: new Date('2024-02-08'),
@@ -172,10 +192,10 @@ const ApiKeyDemo = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Mock validation result based on key format
-    const isValidFormat = key.provider === 'openai' && key.key.startsWith('sk-') ||
-                         key.provider === 'anthropic' && key.key.startsWith('sk-ant-') ||
-                         key.provider === 'google' && key.key.startsWith('AIza') ||
-                         key.provider === 'azure';
+    const isValidFormat = (key.provider === 'openai' && key.key.startsWith('sk-')) ||
+                         (key.provider === 'anthropic' && key.key.startsWith('sk-ant-')) ||
+                         (key.provider === 'google' && key.key.startsWith('AIza')) ||
+                         (key.provider === 'azure');
     
     return {
       valid: isValidFormat,

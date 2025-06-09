@@ -23,6 +23,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import Layout from '../components/layout';
 import ChatInterface from '../components/ChatInterface';
 import ChatControls from '../components/ChatControls';
 import ContextManager from '../components/ContextManager';

@@ -178,4 +178,5 @@ const GmailLayout = ({
   );
 };
 
-export default GmailLayout; 
+export default GmailLayout;
+export { gmailTheme }; 

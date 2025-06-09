@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Box, Typography, Card, CardContent, Button, ButtonGroup, Chip } from '@mui/material';
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import { Box, Container, Typography, TextField, Button, ButtonGroup, FormControl, InputLabel, Select, MenuItem, Paper } from '@mui/material'
+import Layout from '../components/layout'
+import DocumentList from '../components/DocumentList'
 import GmailLayout from '../components/GmailLayout';
-import DocumentList from '../components/DocumentList';
 import DocumentPreview from '../components/DocumentPreview';
 import Seo from '../components/seo';
 
@@ -59,8 +60,8 @@ const DocumentListDemo = () => {
         </Box>
 
         {/* Performance Testing Controls */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
+        <Paper sx={{ mb: 3 }}>
+          <Box sx={{ p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2, fontSize: '16px', fontWeight: 500 }}>
               🚀 Performance Testing
             </Typography>
@@ -104,8 +105,8 @@ const DocumentListDemo = () => {
                 </ul>
               </Box>
             </Box>
-          </CardContent>
-        </Card>
+          </Box>
+        </Paper>
 
         {/* Document Preview Area */}
         <Box sx={{ mb: 3, height: '500px' }}>
@@ -120,8 +121,8 @@ const DocumentListDemo = () => {
         </Box>
 
         {/* Performance Metrics */}
-        <Card>
-          <CardContent>
+        <Paper>
+          <Box sx={{ p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2, fontSize: '16px', fontWeight: 500 }}>
               📊 Performance Metrics
             </Typography>
@@ -160,8 +161,8 @@ const DocumentListDemo = () => {
                 💡 Pro Tip: Try searching for "AI", "Programming", or any document type while scrolling to see real-time filtering performance!
               </Typography>
             </Box>
-          </CardContent>
-        </Card>
+          </Box>
+        </Paper>
       </Box>
     </GmailLayout>
   );
