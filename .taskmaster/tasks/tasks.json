@@ -451,8 +451,36 @@
         11,
         12
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Chat UI with Streaming and Markdown Rendering",
+          "description": "Develop the main chat interface with message streaming capabilities and proper Markdown rendering, including code syntax highlighting and reference linking.",
+          "dependencies": [],
+          "details": "Create a message list component that distinguishes between user and assistant messages. Implement streaming message display using a websocket or SSE connection to show responses as they're generated. Integrate a Markdown renderer (like react-markdown) with syntax highlighting for code blocks (using libraries like Prism.js or highlight.js). Add reference highlighting that links back to source material with proper styling for citations. Ensure the input area includes basic suggestions and handles message submission properly.",
+          "status": "done",
+          "testStrategy": "Test streaming with mock delayed responses. Verify Markdown renders correctly across different content types. Ensure code blocks display with proper syntax highlighting. Test reference links to confirm they navigate to the correct source material."
+        },
+        {
+          "id": 2,
+          "title": "Build Chat Controls and Conversation Management",
+          "description": "Implement the control panel for the chat interface, including model selection, temperature adjustment, and conversation management features.",
+          "dependencies": [],
+          "details": "Create a model selector dropdown that allows users to switch between different AI models. Implement a temperature slider control with appropriate range (typically 0-1 or 0-2) to adjust response randomness. Build conversation management tools including the ability to start new chats, name/rename conversations, and navigate between existing conversations. Add export functionality that allows saving conversations in formats like text, markdown, or JSON. Implement share options to generate shareable links or copy conversation content.",
+          "status": "done",
+          "testStrategy": "Test model switching to ensure proper state updates. Verify temperature adjustments affect response generation. Test conversation management by creating, switching between, and renaming conversations. Validate export functionality by checking the exported files match the conversation content."
+        },
+        {
+          "id": 3,
+          "title": "Develop Context Management System",
+          "description": "Create a context management system that allows users to view, navigate, and edit the context provided to the AI model.",
+          "dependencies": [],
+          "details": "Build a context viewer panel that displays current context information including uploaded documents, previous messages, and system instructions. Implement history navigation controls to scroll through and jump to specific points in the conversation. Create context editing capabilities allowing users to add, remove, or modify context elements like documents or system instructions. Ensure the context manager properly integrates with the chat interface to update the AI's available context when changes are made. Add visual indicators showing which references or context elements are being used in the current response.",
+          "status": "done",
+          "testStrategy": "Test context viewer by verifying it accurately displays all context elements. Validate history navigation by jumping to different points in conversation history. Test context editing by adding/removing documents and verifying the changes affect subsequent AI responses. Ensure context updates are properly synchronized with the chat interface."
+        }
+      ]
     },
     {
       "id": 15,

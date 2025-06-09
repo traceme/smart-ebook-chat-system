@@ -84,6 +84,13 @@ const samplePageLinks = [
       "NEW! Global usage indicators, contextual guards, and real-time quota monitoring",
   },
   {
+    text: "💬 Smart Chat Interface",
+    url: "chat-demo",
+    badge: true,
+    description:
+      "NEW! Interactive chat with streaming responses, markdown rendering, context management, and AI model controls",
+  },
+  {
     text: "🔍 Semantic Search",
     url: "search",
     badge: true,
