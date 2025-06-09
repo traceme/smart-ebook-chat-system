@@ -91,6 +91,20 @@ const samplePageLinks = [
       "NEW! Interactive chat with streaming responses, markdown rendering, context management, and AI model controls",
   },
   {
+    text: "🗂️ Document Management",
+    url: "document-manager-demo",
+    badge: true,
+    description:
+      "NEW! Complete document management with search, filtering, tagging, preview, and batch operations",
+  },
+  {
+    text: "⚙️ Settings & Preferences",
+    url: "settings-demo",
+    badge: true,
+    description:
+      "NEW! Comprehensive settings interface with user preferences, model configuration, and application settings",
+  },
+  {
     text: "🔑 API Key Management",
     url: "api-key-demo",
     badge: true,
@@ -165,7 +179,8 @@ const IndexPage = () => (
           </React.Fragment>
         ))}
         <br />
-        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ Task 5 Complete:</span> API key management with AES-256 encryption, provider validation & usage analytics.
+        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ Task 13 Complete:</span> Document Management UI with search, filtering, tagging, and batch operations.<br />
+        <span style={{ color: '#10b981', fontWeight: 'bold' }}>✅ Task 15 Complete:</span> Settings & Preferences interface with user configuration, model settings, and API key management.
       </p>
     </div>
     <ul className={styles.list}>
