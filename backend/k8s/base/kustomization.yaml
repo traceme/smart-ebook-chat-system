@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: smart-ebook-chat-base
+
+resources:
+- namespace.yaml
+- rbac.yaml
+- configmap.yaml
+- secrets.yaml
+- persistent-volumes.yaml
+- backend-deployment.yaml
+- frontend-deployment.yaml
+- celery-deployment.yaml
+- database-deployments.yaml
+- ingress.yaml
+- network-policies.yaml
+
+commonLabels:
+  app.kubernetes.io/name: smart-ebook-chat-system
+  app.kubernetes.io/instance: smart-ebook-chat
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+- name: smart-ebook-chat/backend
+  newTag: latest
+- name: smart-ebook-chat/frontend
+  newTag: latest
+
+namespace: smart-ebook-chat 

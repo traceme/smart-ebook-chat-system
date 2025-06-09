@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: smart-ebook-chat-production
+
+bases:
+- ../../base
+
+patchesStrategicMerge:
+- replica-patch.yaml
+- resource-patch.yaml
+- ingress-patch.yaml
+
+images:
+- name: smart-ebook-chat/backend
+  newTag: v1.0.0
+- name: smart-ebook-chat/frontend
+  newTag: v1.0.0
+
+configMapGenerator:
+- name: production-config
+  literals:
+  - ENVIRONMENT=production
+  - DEBUG=false
+  - LOG_LEVEL=warning
+
+secretGenerator:
+- name: production-secrets
+  literals:
+  - DATABASE_URL=postgresql://prod_user:CHANGE_THIS_PASSWORD@postgresql:5432/smart_ebook_chat_prod
+
+namespace: smart-ebook-chat 

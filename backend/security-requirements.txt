@@ -1,0 +1,73 @@
+# Security Dependencies for Smart Ebook Chat System
+
+# Cryptography and Encryption
+cryptography>=41.0.0
+passlib[bcrypt]>=1.7.4
+pycryptodome>=3.18.0
+
+# JWT and Authentication
+python-jose[cryptography]>=3.3.0
+python-multipart>=0.0.6
+
+# Password Security
+bcrypt>=4.0.1
+argon2-cffi>=21.3.0
+
+# Security Headers and CORS
+python-security>=1.0.0
+
+# Rate Limiting
+slowapi>=0.1.9
+redis>=4.5.0
+
+# Request Validation
+pydantic[email]>=2.0.0
+validators>=0.20.0
+
+# Vulnerability Scanning
+safety>=2.3.0
+requests>=2.31.0
+packaging>=23.0
+
+# Network Security
+ipaddress>=1.0.23
+dnspython>=2.3.0
+
+# Audit Logging
+python-json-logger>=2.0.0
+structlog>=23.1.0
+
+# Security Testing
+bandit>=1.7.5
+semgrep>=1.45.0
+
+# Monitoring and Metrics
+prometheus-client>=0.17.0
+statsd>=4.0.1
+
+# Development Security Tools (optional)
+# pip-audit>=2.6.0
+# licensecheck>=2023.1.1
+
+# Additional Security Libraries
+pyotp>=2.8.0  # For TOTP/HOTP if implementing 2FA
+qrcode>=7.4.2  # For QR code generation in 2FA
+pillow>=10.0.0  # For QR code image generation
+
+# Network and Protocol Security
+certifi>=2023.7.22  # SSL certificate verification
+urllib3>=2.0.0  # Secure HTTP client
+
+# Input Sanitization
+bleach>=6.0.0  # HTML sanitization
+markupsafe>=2.1.0  # Secure string handling
+
+# Secure Random Generation
+secrets  # Built-in Python module (no install needed)
+
+# CSRF Protection
+itsdangerous>=2.1.0  # Cryptographically signed tokens
+
+# Session Security
+flask-session>=0.5.0  # If using Flask sessions
+secure-cookie>=0.2.0  # Secure cookie handling 

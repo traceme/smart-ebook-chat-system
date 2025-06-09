@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: smart-ebook-chat
+  namespace: smart-ebook-chat
+  labels:
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/component: rbac
+automountServiceAccountToken: false
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: smart-ebook-chat
+  name: smart-ebook-chat-role
+  labels:
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/component: rbac
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: smart-ebook-chat-rolebinding
+  namespace: smart-ebook-chat
+  labels:
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/component: rbac
+subjects:
+- kind: ServiceAccount
+  name: smart-ebook-chat
+  namespace: smart-ebook-chat
+roleRef:
+  kind: Role
+  name: smart-ebook-chat-role
+  apiGroup: rbac.authorization.k8s.io 

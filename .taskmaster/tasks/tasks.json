@@ -510,7 +510,7 @@
         8,
         11
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -540,8 +540,40 @@
         16,
         17
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Multi-stage Dockerfiles",
+          "description": "Develop optimized multi-stage Dockerfiles for both the FastAPI backend and Gatsby frontend applications",
+          "details": "Create production-ready multi-stage Dockerfiles that minimize image size and enhance security:\n\n1. Backend Dockerfile:\n   - Use Python slim image as base\n   - Create separate stages for dependencies and runtime\n   - Install and build dependencies in build stage\n   - Copy only necessary files to runtime stage\n   - Set proper user permissions and non-root user\n   - Configure health checks\n\n2. Frontend Dockerfile:\n   - Use Node.js image for build stage\n   - Build Gatsby static site\n   - Use nginx:alpine for serving static files\n   - Configure nginx with proper caching headers\n   - Implement gzip compression\n   - Set up proper security headers",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 18
+        },
+        {
+          "id": 2,
+          "title": "Enhance Docker Compose Configuration",
+          "description": "Improve the existing docker-compose setup for development, staging, and production environments",
+          "details": "Enhance the existing docker-compose configuration to support multiple environments:\n\n1. Development (docker-compose.dev.yml):\n   - Hot reloading for both frontend and backend\n   - Debug configurations\n   - Volume mounts for source code\n   - Development database with test data\n\n2. Staging (docker-compose.staging.yml):\n   - Production-like configuration\n   - SSL certificates (Let's Encrypt)\n   - Environment-specific configurations\n   - Performance monitoring enabled\n\n3. Production (docker-compose.prod.yml):\n   - Optimized for performance\n   - Health checks and restart policies\n   - Resource limits and reservations\n   - Security hardening",
+          "status": "done",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 18
+        },
+        {
+          "id": 3,
+          "title": "Create Kubernetes Deployment Manifests",
+          "description": "Develop Kubernetes deployment manifests for all application components",
+          "details": "Create comprehensive Kubernetes manifests for production deployment:\n\n1. Application Deployments:\n   - Backend API deployment with replica sets\n   - Frontend deployment with nginx serving\n   - Celery worker deployment with auto-scaling\n   - Database deployments with persistent volumes\n\n2. Services and Networking:\n   - LoadBalancer/NodePort services\n   - Ingress controllers with SSL termination\n   - Network policies for security\n   - Service mesh configuration (optional)\n\n3. Configuration Management:\n   - ConfigMaps for application settings\n   - Secrets for sensitive data\n   - Environment-specific configurations\n   - Persistent Volume Claims for storage",
+          "status": "done",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 18
+        }
+      ]
     },
     {
       "id": 19,
@@ -555,7 +587,7 @@
         5,
         18
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -569,7 +601,7 @@
         18,
         19
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     }
   ]

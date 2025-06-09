@@ -1,0 +1,91 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smart-ebook-chat-ingress
+  namespace: smart-ebook-chat
+  labels:
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/component: ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  tls:
+  - hosts:
+    - smart-ebook-chat.example.com
+    - api.smart-ebook-chat.example.com
+    secretName: smart-ebook-chat-tls
+  rules:
+  - host: smart-ebook-chat.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 8080
+  - host: api.smart-ebook-chat.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 8000
+
+---
+# Admin/Internal Ingress for management interfaces
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smart-ebook-chat-admin-ingress
+  namespace: smart-ebook-chat
+  labels:
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/component: ingress-admin
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: admin-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Smart Ebook Chat Admin"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+spec:
+  tls:
+  - hosts:
+    - admin.smart-ebook-chat.example.com
+    secretName: smart-ebook-chat-admin-tls
+  rules:
+  - host: admin.smart-ebook-chat.example.com
+    http:
+      paths:
+      - path: /minio
+        pathType: Prefix
+        backend:
+          service:
+            name: minio
+            port:
+              number: 9001
+      - path: /qdrant
+        pathType: Prefix
+        backend:
+          service:
+            name: qdrant
+            port:
+              number: 6333 

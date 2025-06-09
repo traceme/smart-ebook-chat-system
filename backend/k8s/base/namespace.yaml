@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: smart-ebook-chat
+  labels:
+    name: smart-ebook-chat
+    app.kubernetes.io/name: smart-ebook-chat-system
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: infrastructure
+    app.kubernetes.io/managed-by: kubernetes
+  annotations:
+    description: "Smart Ebook Chat System - AI-powered document processing and chat" 

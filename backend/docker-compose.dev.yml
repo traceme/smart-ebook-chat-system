@@ -1,0 +1,195 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/.venv  # Exclude virtual environment from hot reload
+    env_file:
+      - env.dev
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+      - RELOAD=true
+    depends_on:
+      - db
+      - redis
+      - qdrant
+      - minio
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../my-gatsby-site
+      dockerfile: Dockerfile.simple  # Use simple version for development
+    ports:
+      - "3000:8080"
+    volumes:
+      - ../my-gatsby-site/src:/app/src:ro  # Read-only for safety
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/.venv
+    env_file:
+      - env.dev
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+    depends_on:
+      - db
+      - redis
+      - minio
+    command: ["celery", "-A", "app.workers.celery_app", "worker", "--loglevel=debug", "--concurrency=2", "-Q", "document_conversion,vector_indexing,celery"]
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  celery-flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    env_file:
+      - env.dev
+    environment:
+      - ENVIRONMENT=development
+    depends_on:
+      - redis
+      - celery-worker
+    command: ["celery", "-A", "app.workers.celery_app", "flower", "--port=5555"]
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data/
+      - ./scripts/init-dev-db.sql:/docker-entrypoint-initdb.d/init-dev-db.sql:ro
+    environment:
+      - POSTGRES_USER=dev_user
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_DB=dev_db
+      - POSTGRES_HOST_AUTH_METHOD=trust  # Dev only - not secure for production
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d dev_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes --appendfsync everysec
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.8.0
+    ports:
+      - "6333:6333"
+      - "6334:6334"  # gRPC port for development
+    volumes:
+      - qdrant_dev_storage:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__LOG_LEVEL=DEBUG
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  minio:
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_dev_storage:/data
+    environment:
+      - MINIO_ROOT_USER=dev_minio_user
+      - MINIO_ROOT_PASSWORD=dev_minio_password
+      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+    command: server /data --console-address ":9001"
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Development utilities
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web interface
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=dev@example.com
+      - PGADMIN_DEFAULT_PASSWORD=dev_password
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin_dev_data:/var/lib/pgadmin
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  qdrant_dev_storage:
+  minio_dev_storage:
+  pgadmin_dev_data:
+
+networks:
+  app-network:
+    driver: bridge 
