@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 import secrets
+from typing import Optional, Dict, Any
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Smart eBook Chat System"
@@ -26,13 +27,88 @@ class Settings(BaseSettings):
     MINIO_BUCKET: str = "ebooks"
     
     # OpenAI Configuration
-    OPENAI_API_KEY: str = ""
+    OPENAI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
+    GOOGLE_AI_API_KEY: Optional[str] = None
     
     # Qdrant Configuration
     QDRANT_URL: str = "http://qdrant:6333"
 
+    # LLM Provider Settings
+    LLM_PROVIDER_ENABLED: bool = True
+    LLM_DEFAULT_PROVIDER: str = "openai"
+    LLM_FALLBACK_ENABLED: bool = True
+    LLM_MAX_RETRIES: int = 3
+    LLM_TIMEOUT: int = 30
+
+    # Cost and Usage Tracking
+    LLM_COST_TRACKING_ENABLED: bool = True
+    LLM_USAGE_ANALYTICS_ENABLED: bool = True
+    LLM_BUDGET_ALERTS_ENABLED: bool = False
+    LLM_MONTHLY_BUDGET_LIMIT: Optional[float] = None
+
+    # Provider Selection Strategy
+    # Options: first_available, round_robin, lowest_cost, fastest, best_quality, random
+    LLM_SELECTION_STRATEGY: str = "first_available"
+
     class Config:
         case_sensitive = True
         env_file = ".env"
+
+    @property
+    def llm_providers_config(self) -> Dict[str, Dict[str, Any]]:
+        """Get LLM providers configuration."""
+        config = {}
+        
+        # OpenAI Configuration
+        if self.OPENAI_API_KEY:
+            config["openai"] = {
+                "type": "openai",
+                "api_key": self.OPENAI_API_KEY,
+                "enabled": True,
+                "priority": 1,
+                "weight": 1.0,
+                "max_retries": self.LLM_MAX_RETRIES,
+                "timeout": self.LLM_TIMEOUT,
+                "fallback": True,
+                "options": {
+                    "default_model": "gpt-4o-mini",
+                    "organization": None
+                }
+            }
+        
+        # Anthropic Configuration
+        if self.ANTHROPIC_API_KEY:
+            config["claude"] = {
+                "type": "claude",
+                "api_key": self.ANTHROPIC_API_KEY,
+                "enabled": True,
+                "priority": 2,
+                "weight": 1.0,
+                "max_retries": self.LLM_MAX_RETRIES,
+                "timeout": self.LLM_TIMEOUT,
+                "fallback": True,
+                "options": {
+                    "default_model": "claude-3-5-sonnet-20241022"
+                }
+            }
+        
+        # Google AI Configuration
+        if self.GOOGLE_AI_API_KEY:
+            config["gemini"] = {
+                "type": "gemini",
+                "api_key": self.GOOGLE_AI_API_KEY,
+                "enabled": True,
+                "priority": 3,
+                "weight": 1.0,
+                "max_retries": self.LLM_MAX_RETRIES,
+                "timeout": self.LLM_TIMEOUT,
+                "fallback": True,
+                "options": {
+                    "default_model": "gemini-2.0-flash-exp"
+                }
+            }
+        
+        return config
 
 settings = Settings() 

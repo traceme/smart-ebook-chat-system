@@ -387,6 +387,35 @@ const SubscriptionPlans = () => {
     return plan.price * 12 * 0.2;
   };
 
+  const onContactSales = () => {
+    // Handle enterprise contact sales
+    window.open('mailto:sales@smartebookchat.com?subject=Enterprise Plan Inquiry', '_blank');
+  };
+
+  const handleConfirmUpgrade = async () => {
+    if (!selectedPlan) return;
+    
+    try {
+      setConfirmDialog(false);
+      setUpgradeDialog(true);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Update current plan
+      setCurrentPlan(selectedPlan.id);
+      setUpgradeDialog(false);
+      setSelectedPlan(null);
+      
+      // Show success message (you could add a toast here)
+      console.log(`Successfully upgraded to ${selectedPlan.name} plan`);
+      
+    } catch (error) {
+      setUpgradeDialog(false);
+      console.error('Failed to upgrade plan:', error);
+    }
+  };
+
   const PlanCard = ({ plan }) => {
     const isCurrent = isCurrentPlan(plan.id);
     const canUpgradeToThis = canUpgrade(plan.name);

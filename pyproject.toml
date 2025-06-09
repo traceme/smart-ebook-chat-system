@@ -22,6 +22,11 @@ markitdown = "^0.0.1" # For document conversion
 langchain-text-splitters = "^0.2.0" # For text chunking
 tiktoken = "^0.7.0" # For token counting
 
+# LLM Provider dependencies
+openai = "^1.30.0" # OpenAI API client
+anthropic = "^0.25.0" # Anthropic Claude API client
+google-generativeai = "^0.5.0" # Google Gemini API client
+
 # Optional advanced extraction libraries
 pymupdf = {version = "^1.23.0", optional = true} # For advanced PDF extraction
 python-docx = {version = "^1.1.0", optional = true} # For advanced DOCX extraction
