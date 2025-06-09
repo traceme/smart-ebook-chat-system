@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "secs-backend"
+version = "0.1.0"
+description = "Backend for the Smart eBook Chat System"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.0"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+pydantic-settings = "^2.2.1"
+sqlalchemy = "^2.0.29"
+alembic = "^1.13.1"
+celery = "^5.3.6"
+redis = "^5.0.4"
+psycopg2-binary = "^2.9.9" # For PostgreSQL
+qdrant-client = "^1.8.0" # For Qdrant
+boto3 = "^1.34.100" # For S3/MinIO
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
